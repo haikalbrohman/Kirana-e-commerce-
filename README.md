@@ -35,7 +35,10 @@ keranjang/wishlist/akun **tetap tersimpan** saat halaman dimuat ulang (localStor
 ```
 index.html        Kerangka halaman (header, footer, navigasi bawah)
 css/style.css     Semua tampilan. Ganti warna di bagian :root
-js/data.js        ⭐ DATA TOKO — produk, kategori, voucher, ongkir, FAQ, nomor WA
+js/data.js        ⭐ PENGATURAN TOKO — kategori, voucher, ongkir, FAQ, nomor WA
+js/products.js    Daftar produk (diperbarui otomatis oleh Dasbor Penjual)
+js/admin.js       Dasbor Penjual (#/admin)
+images/products/  Foto produk hasil upload
 js/store.js       Penyimpanan keranjang, wishlist, akun, pesanan (localStorage)
 js/ai.js          Shopia AI (pencarian, chat, rekomendasi, ringkasan ulasan)
 js/app.js         Router & semua halaman
@@ -45,13 +48,29 @@ sw.js             Service worker: install & mode offline
 icons/            Ikon aplikasi
 ```
 
-## ✏️ Cara mengganti data
+## 🏪 Dasbor Penjual: tambah produk & upload foto dari HP
 
-Semua yang perlu Anda ubah ada di **`js/data.js`**:
+Buka **Akun → Dasbor Penjual** (atau alamat `#/admin`). Di sana Anda bisa:
+- **Tambah produk** dengan foto dari galeri HP (maks. 6 foto, otomatis dikecilkan)
+- **Edit** nama, harga, harga coret, stok, deskripsi, varian, dan foto
+- **Hapus** produk
+
+Hubungkan sekali saja dengan **token GitHub** (panduan langkah demi langkah ada di halaman itu):
+1. Buka https://github.com/settings/personal-access-tokens/new
+2. Repository access: **Only select repositories** → pilih repo ini
+3. Permissions → **Contents: Read and write** → **Generate token**
+4. Tempel token di Dasbor Penjual
+
+Produk tersimpan di `js/products.js` dan foto di `images/products/`. Pembeli melihat
+perubahan beberapa menit setelah disimpan (menunggu GitHub Pages). Token hanya disimpan di
+HP penjual; jika HP hilang, hapus token di https://github.com/settings/personal-access-tokens
+
+## ✏️ Pengaturan lain
+
+Ada di **`js/data.js`**:
 
 - **Nomor WhatsApp**: `CONFIG.whatsapp` (format `628xxxx`, tanpa `+`)
-- **Produk**: edit array `PRODUCTS`. Untuk foto asli, isi `images: ["https://.../foto.jpg"]`.
-  Jika kosong, ditampilkan ilustrasi emoji.
+- **Repo & branch untuk Dasbor Penjual**: `CONFIG.github` (ubah `branch` jika GitHub Pages pindah ke `main`)
 - **Voucher**: array `VOUCHERS` (`percent`, `fixed`, atau `shipping`)
 - **Batas gratis ongkir**: `CONFIG.freeShippingMin`
 - **Warna tema**: variabel `--primary` dkk. di atas `css/style.css`

@@ -8,7 +8,7 @@
    Naikkan angka VERSION jika ingin menghapus semua salinan lama.
    ===================================================================== */
 
-const VERSION = "shopia-v1";
+const VERSION = "shopia-v2";
 
 // File inti yang disimpan saat aplikasi pertama kali di-install
 const APP_SHELL = [
@@ -16,8 +16,10 @@ const APP_SHELL = [
   "./index.html",
   "./css/style.css",
   "./js/data.js",
+  "./js/products.js",
   "./js/store.js",
   "./js/ai.js",
+  "./js/admin.js",
   "./js/app.js",
   "./manifest.json",
   "./icons/icon-192.png",

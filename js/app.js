@@ -34,7 +34,7 @@ const stars = (r) => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r
 // Gambar produk: pakai foto jika ada, jika tidak tampilkan ilustrasi emoji
 function thumb(p, idx = 0) {
   const img = p.images && p.images.length ? p.images[idx % p.images.length] : null;
-  if (img) return `<img class="thumb-img" src="${esc(img)}" alt="${esc(p.name)}" loading="lazy" />`;
+  if (img) return `<img class="thumb-img" src="${esc(Admin.imgSrc(img))}" alt="${esc(p.name)}" loading="lazy" />`;
   const angles = [135, 45, 200, 300];
   const transforms = ["none", "rotate(-12deg) scale(.9)", "scale(1.15)", "rotate(10deg)"];
   const [c1, c2] = p.color || ["#ede9fe", "#c4b5fd"];
@@ -126,7 +126,7 @@ function productCard(p, { compact = false } = {}) {
     <a href="#/produk/${p.id}" class="info">
       <div class="name">${esc(p.name)}</div>
       <div class="price">${formatRupiah(p.price)}${d && !compact ? `<span class="price-old">${formatRupiah(p.originalPrice)}</span>` : ""}</div>
-      <div class="meta"><span class="star">★</span>${p.rating} · ${formatSold(p.sold)} terjual</div>
+      <div class="meta">${p.rating > 0 ? `<span class="star">★</span>${p.rating} · ` : `<span class="pill pill-primary" style="padding:1px 6px">Baru</span>`}${p.sold ? formatSold(p.sold) + " terjual" : ""}</div>
     </a>
     ${compact ? "" : `<button class="quick-add" data-action="quick-add" data-id="${p.id}" aria-label="Tambah ke keranjang">+</button>`}
   </div>`;
@@ -404,7 +404,7 @@ function pageProduct(id) {
         </div>
         <h1 class="pd-name">${esc(p.name)}</h1>
         <div class="pd-stats">
-          <span><span class="stars">★</span> ${p.rating} (${p.reviews.length} ulasan)</span>
+          <span>${p.rating > 0 ? `<span class="stars">★</span> ${p.rating} (${p.reviews.length} ulasan)` : "✨ Produk baru"}</span>
           <span>${formatSold(p.sold)} terjual</span>
           <span style="color:${p.stock < 20 ? "var(--danger)" : "inherit"}">Stok: ${p.stock}</span>
         </div>
@@ -461,7 +461,7 @@ function pageProduct(id) {
       </div>
 
       <div class="pd-box">
-        <div class="section-head" style="margin-bottom:4px"><h2 style="font-size:1rem">Ulasan Pembeli</h2><span class="small"><span class="stars">★</span> ${p.rating}/5</span></div>
+        <div class="section-head" style="margin-bottom:4px"><h2 style="font-size:1rem">Ulasan Pembeli</h2>${p.rating > 0 ? `<span class="small"><span class="stars">★</span> ${p.rating}/5</span>` : ""}</div>
         ${
           p.reviews.length
             ? p.reviews
@@ -721,6 +721,7 @@ function pageAccount() {
         </form>
       </div>
       ${isStandalone() ? "" : `<button class="btn btn-outline btn-block" style="margin-top:12px" data-action="install-app">📲 Install Aplikasi Shopia</button>`}
+      <p class="small muted" style="text-align:center;margin-top:12px">Penjual? <a href="#/admin" style="color:var(--primary);font-weight:700">🏪 Masuk Dasbor Penjual</a></p>
       ${Store.myOrders().length ? `<p class="small muted" style="text-align:center;margin-top:12px">Belanja sebagai tamu? <a href="#/pesanan" style="color:var(--primary);font-weight:700">Lihat pesanan tamu</a></p>` : ""}
     </div>`;
   }
@@ -742,6 +743,7 @@ function pageAccount() {
     ${isStandalone() ? "" : `<button data-action="install-app">📲 Install Aplikasi Shopia <span class="arrow">›</span></button>`}
     <a href="#/faq">❓ Pusat Bantuan <span class="arrow">›</span></a>
     <a href="#/kontak">💬 Hubungi Kami <span class="arrow">›</span></a>
+    <a href="#/admin">🏪 Dasbor Penjual <span class="arrow">›</span></a>
     <button data-action="logout" style="color:var(--danger)">🚪 Keluar</button>
   </div>
   ${recommendSection("✨ Rekomendasi untukmu")}`;
@@ -910,6 +912,10 @@ function render(scrollTop = true) {
     case "faq":
       html = pageFaq();
       title = "FAQ - Shopia";
+      break;
+    case "admin":
+      html = Admin.page();
+      title = "Dasbor Penjual - Shopia";
       break;
     default:
       html = emptyState("🧭", "Halaman tidak ditemukan", "Link yang kamu buka mungkin salah.", "Ke Beranda", "#/");
