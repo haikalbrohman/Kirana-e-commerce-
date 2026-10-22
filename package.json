@@ -1,0 +1,13 @@
+{
+  "name": "shopia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shopia - website e-commerce mobile-first dengan asisten belanja AI",
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes serve -l 3000 ."
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.1.0"
+  }
+}

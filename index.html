@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Shopia - Belanja Pintar, Dibantu AI</title>
+  <meta name="description" content="Shopia: toko online modern untuk anak muda Indonesia. Fashion, elektronik, kecantikan, dan produk UMKM lokal dengan asisten belanja AI." />
+  <meta name="theme-color" content="#7c3aed" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%237c3aed'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>S</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <div class="container">
+      <div class="header-top">
+        <a href="#/" class="logo" aria-label="Shopia beranda"><span class="logo-mark">S</span>Shopia</a>
+
+        <!-- Pencarian (di desktop tampil di tengah header) -->
+        <div class="search" id="search">
+          <form id="search-form" role="search">
+            <input id="search-input" type="search" placeholder='Coba: "sepatu putih di bawah 300rb"' autocomplete="off" aria-label="Cari produk" />
+            <button type="button" class="ai-chip" id="search-ai" title="Tanya Shopia AI">✨ AI</button>
+            <button type="submit" aria-label="Cari">🔍</button>
+          </form>
+          <div class="search-suggest hidden" id="search-suggest"></div>
+        </div>
+
+        <nav class="nav-desktop">
+          <a href="#/katalog">Katalog</a>
+          <a href="#/tentang">Tentang</a>
+          <a href="#/faq">FAQ</a>
+          <a href="#/kontak">Kontak</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="#/wishlist" class="icon-btn" aria-label="Wishlist">🤍<span class="badge" id="wish-badge"></span></a>
+          <a href="#/keranjang" class="icon-btn" aria-label="Keranjang" id="cart-icon">🛒<span class="badge" id="cart-badge"></span></a>
+          <a href="#/akun" class="icon-btn" aria-label="Akun">👤</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= ISI HALAMAN (diisi oleh js/app.js) ================= -->
+  <main id="app" class="container"></main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="brand">
+          <div class="logo"><span class="logo-mark">S</span>Shopia</div>
+          <p class="small" style="margin-top:8px">Belanja pintar untuk anak muda Indonesia. Produk pilihan, harga jujur, dibantu AI.</p>
+        </div>
+        <div>
+          <h4>Belanja</h4>
+          <a href="#/katalog">Semua Produk</a>
+          <a href="#/katalog?sort=diskon">Promo</a>
+          <a href="#/katalog?cat=umkm">UMKM Lokal</a>
+        </div>
+        <div>
+          <h4>Bantuan</h4>
+          <a href="#/faq">FAQ</a>
+          <a href="#/kontak">Kontak</a>
+          <a href="#/akun">Akun Saya</a>
+        </div>
+        <div>
+          <h4>Shopia</h4>
+          <a href="#/tentang">Tentang Kami</a>
+          <a href="#/faq">Kebijakan Retur</a>
+        </div>
+      </div>
+      <div class="copy">© <span id="year"></span> Shopia. Dibuat dengan 💜 di Indonesia.</div>
+    </div>
+  </footer>
+
+  <!-- ================= NAVIGASI BAWAH (HP) ================= -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <a href="#/" data-nav="/"><span class="ico">🏠</span>Beranda</a>
+    <a href="#/katalog" data-nav="/katalog"><span class="ico">🗂️</span>Katalog</a>
+    <button class="ai-tab" data-open-ai><span class="ico">✨</span>Shopia AI</button>
+    <a href="#/keranjang" data-nav="/keranjang"><span class="ico">🛒</span>Keranjang<span class="badge" id="cart-badge-2"></span></a>
+    <a href="#/akun" data-nav="/akun"><span class="ico">👤</span>Akun</a>
+  </nav>
+
+  <!-- Tombol AI mengambang (desktop) -->
+  <button class="ai-float" data-open-ai aria-label="Buka Shopia AI">✨</button>
+
+  <!-- ================= TOMBOL WHATSAPP MENGAMBANG ================= -->
+  <a class="wa-float" id="wa-float" target="_blank" rel="noopener" aria-label="Chat WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.16-.17.2-.34.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.66-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.32l-.34-.2-3.57.94.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.02c0-5.2 4.23-9.43 9.44-9.43 2.52 0 4.89.98 6.67 2.77a9.37 9.37 0 0 1 2.76 6.67c0 5.2-4.23 9.43-9.44 9.43M20.08 3.9A11.3 11.3 0 0 0 12.05.58C5.79.58.7 5.67.7 11.92c0 2 .52 3.95 1.52 5.67L.6 23.5l6.05-1.59a11.3 11.3 0 0 0 5.4 1.38h.01c6.25 0 11.34-5.09 11.34-11.34 0-3.03-1.18-5.88-3.32-8.02"/></svg>
+  </a>
+
+  <!-- Wadah notifikasi -->
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
+  <!-- Wadah modal & panel AI -->
+  <div id="modal-root"></div>
+
+  <!-- Urutan penting: data -> penyimpanan -> AI -> aplikasi -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
