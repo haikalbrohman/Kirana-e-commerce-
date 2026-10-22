@@ -40,6 +40,9 @@ js/store.js       Penyimpanan keranjang, wishlist, akun, pesanan (localStorage)
 js/ai.js          Shopia AI (pencarian, chat, rekomendasi, ringkasan ulasan)
 js/app.js         Router & semua halaman
 api/chat.js       (Opsional) Server AI pakai Claude untuk Vercel
+manifest.json     Identitas aplikasi (nama, ikon, warna)
+sw.js             Service worker: install & mode offline
+icons/            Ikon aplikasi
 ```
 
 ## ✏️ Cara mengganti data
@@ -60,6 +63,19 @@ Kode voucher contoh: `SHOPIABARU`, `HEMAT20K`, `GRATISONGKIR`, `UMKMJUARA`.
 **Lokal:** buka `index.html` di browser, atau `npm start` lalu buka http://localhost:3000
 
 **GitHub Pages:** Settings → Pages → Branch `main` / root. Selesai.
+
+## 📲 Aplikasi Shopia (PWA)
+
+Shopia bisa di-install seperti aplikasi: ikon di layar HP, terbuka layar penuh, dan tetap
+bisa dibuka saat offline.
+
+- **Android (Chrome):** buka website, tekan **Install** pada ajakan yang muncul, atau menu ⋮ → **Install aplikasi**.
+- **iPhone (Safari):** tombol **Bagikan** ⬆️ → **Tambah ke Layar Utama**.
+- Tombol **Install Aplikasi Shopia** juga ada di halaman Akun.
+
+File terkait: `manifest.json` (nama & ikon), `sw.js` (mode offline), folder `icons/`.
+Jika mengganti banyak file dan ingin semua pengguna langsung memuat ulang, naikkan
+`VERSION` di `sw.js`.
 
 ## 🤖 Mengaktifkan AI Claude (opsional)
 

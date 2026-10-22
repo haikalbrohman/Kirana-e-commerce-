@@ -720,6 +720,7 @@ function pageAccount() {
           ${authTab === "daftar" ? `<p class="small muted" style="text-align:center">🎁 Pengguna baru dapat voucher <b>SHOPIABARU</b> diskon 15%</p>` : ""}
         </form>
       </div>
+      ${isStandalone() ? "" : `<button class="btn btn-outline btn-block" style="margin-top:12px" data-action="install-app">📲 Install Aplikasi Shopia</button>`}
       ${Store.myOrders().length ? `<p class="small muted" style="text-align:center;margin-top:12px">Belanja sebagai tamu? <a href="#/pesanan" style="color:var(--primary);font-weight:700">Lihat pesanan tamu</a></p>` : ""}
     </div>`;
   }
@@ -738,6 +739,7 @@ function pageAccount() {
     <a href="#/pesanan">📦 Riwayat Pesanan <span class="arrow">›</span></a>
     <a href="#/wishlist">💜 Wishlist <span class="arrow">›</span></a>
     <button data-open-ai>✨ Tanya Shopia AI <span class="arrow">›</span></button>
+    ${isStandalone() ? "" : `<button data-action="install-app">📲 Install Aplikasi Shopia <span class="arrow">›</span></button>`}
     <a href="#/faq">❓ Pusat Bantuan <span class="arrow">›</span></a>
     <a href="#/kontak">💬 Hubungi Kami <span class="arrow">›</span></a>
     <button data-action="logout" style="color:var(--danger)">🚪 Keluar</button>
@@ -1418,6 +1420,93 @@ function tickCountdown() {
   els.forEach((el) => (el.innerHTML = `<b>${pad(h)}</b>:<b>${pad(m)}</b>:<b>${pad(s)}</b>`));
 }
 setInterval(tickCountdown, 1000);
+
+/* =====================================================================
+   APLIKASI (PWA): install ke layar HP & bisa dibuka offline
+   ===================================================================== */
+const isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+let installPrompt = null; // event dari Chrome/Android untuk memunculkan dialog install
+
+// Ajakan install tidak muncul lagi selama 7 hari setelah ditutup
+function installDismissedRecently() {
+  try {
+    return Date.now() - Number(localStorage.getItem("shopia_install_dismissed") || 0) < 7 * 864e5;
+  } catch (e) {
+    return false;
+  }
+}
+
+function showInstallBar() {
+  if (isStandalone() || installDismissedRecently()) return;
+  document.getElementById("install-bar").classList.remove("hidden");
+}
+
+// Android / Chrome / Edge: browser memberi tahu bahwa aplikasi bisa di-install
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  installPrompt = e;
+  setTimeout(showInstallBar, 4000); // tunggu sebentar agar tidak mengganggu
+});
+
+// iPhone/iPad (Safari) tidak punya tombol install otomatis -> tampilkan panduan
+if (isIOS() && !isStandalone()) setTimeout(showInstallBar, 6000);
+
+window.addEventListener("appinstalled", () => {
+  document.getElementById("install-bar").classList.add("hidden");
+  toast("Shopia berhasil di-install! Cek layar utama HP-mu 🎉", { icon: "📲" });
+});
+
+async function installApp() {
+  document.getElementById("install-bar").classList.add("hidden");
+  if (installPrompt) {
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    return;
+  }
+  // Panduan manual (iPhone atau browser yang tidak mendukung dialog install)
+  const ios = isIOS();
+  modalRoot.innerHTML = `
+  <div class="filter-panel" data-close-modal>
+    <div class="modal-sheet" role="dialog" aria-label="Cara install Shopia">
+      <div class="modal-head" style="align-items:center">
+        <img src="icons/icon-192.png" alt="" width="56" height="56" style="border-radius:14px" />
+        <div style="flex:1"><b>Install aplikasi Shopia</b><div class="small muted">Gratis, tidak memakan banyak memori</div></div>
+        <button class="icon-btn" data-close-modal aria-label="Tutup">✕</button>
+      </div>
+      <ol class="ios-steps">
+        ${
+          ios
+            ? `<li><b class="n">1</b><span>Tekan tombol <b>Bagikan</b> (kotak dengan panah ke atas ⬆️) di Safari</span></li>
+               <li><b class="n">2</b><span>Geser ke bawah, pilih <b>Tambah ke Layar Utama</b> ➕</span></li>
+               <li><b class="n">3</b><span>Tekan <b>Tambah</b>. Ikon Shopia muncul di layar HP</span></li>`
+            : `<li><b class="n">1</b><span>Tekan menu <b>⋮</b> di pojok kanan atas browser</span></li>
+               <li><b class="n">2</b><span>Pilih <b>Install aplikasi</b> atau <b>Tambahkan ke layar utama</b></span></li>
+               <li><b class="n">3</b><span>Tekan <b>Install</b>. Ikon Shopia muncul di layar HP</span></li>`
+        }
+      </ol>
+    </div>
+  </div>`;
+  modalRoot.onclick = (e) => {
+    if (e.target.matches("[data-close-modal]") || e.target.closest("button[data-close-modal]")) closeModal();
+  };
+}
+
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-action=install-app], [data-action=install-dismiss]");
+  if (!el) return;
+  if (el.dataset.action === "install-app") return installApp();
+  document.getElementById("install-bar").classList.add("hidden");
+  try {
+    localStorage.setItem("shopia_install_dismissed", String(Date.now()));
+  } catch (err) {}
+});
+
+// Daftarkan service worker (hanya jalan di https atau localhost)
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch((err) => console.warn("Service worker gagal:", err)));
+}
 
 /* =====================================================================
    MULAI APLIKASI

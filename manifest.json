@@ -1,0 +1,24 @@
+{
+  "name": "Shopia - Belanja Pintar, Dibantu AI",
+  "short_name": "Shopia",
+  "description": "Belanja fashion, elektronik, kecantikan, dan produk UMKM lokal dengan asisten belanja AI.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf9fd",
+  "theme_color": "#7c3aed",
+  "lang": "id",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Keranjang", "url": "./#/keranjang", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Pesanan Saya", "url": "./#/pesanan", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Katalog", "url": "./#/katalog", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
