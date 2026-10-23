@@ -8,7 +8,7 @@
    Naikkan angka VERSION jika ingin menghapus semua salinan lama.
    ===================================================================== */
 
-const VERSION = "shopia-v3";
+const VERSION = "shopia-v4";
 
 // File inti yang disimpan saat aplikasi pertama kali di-install
 const APP_SHELL = [
@@ -52,7 +52,8 @@ self.addEventListener("fetch", (event) => {
   if (!sameOrigin && !isFont) return;
 
   event.respondWith(
-    fetch(req)
+    // "no-cache": selalu cek ke server apakah ada versi baru (bukan salinan lama browser)
+    fetch(req, sameOrigin ? { cache: "no-cache" } : {})
       .then((res) => {
         if (res.ok || res.type === "opaque") {
           const copy = res.clone();
@@ -61,7 +62,7 @@ self.addEventListener("fetch", (event) => {
         return res;
       })
       .catch(() =>
-        caches.match(req).then((cached) => cached || (req.mode === "navigate" ? caches.match("./index.html") : Response.error()))
+        caches.match(req, { ignoreSearch: true }).then((cached) => cached || (req.mode === "navigate" ? caches.match("./index.html") : Response.error()))
       )
   );
 });
