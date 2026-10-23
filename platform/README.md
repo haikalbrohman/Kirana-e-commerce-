@@ -111,8 +111,8 @@ Rekomendasi gratis/murah untuk awal:
 | AI | [Anthropic Console](https://console.anthropic.com) | `ANTHROPIC_API_KEY` di API (opsional) |
 
 **API (mis. Render "Web Service", root: `platform`):**
-- Build: `npm ci && npm run build:api`
-- Pre-deploy: `npm run db:migrate`
+- Build: `npm ci && npm run build:api && npm run db:migrate` (migrasi ikut build bila paket
+  gratis tidak punya *pre-deploy command*). **Jangan** jalankan `db:seed` di production.
 - Start: `npm run start:api`
 - Environment: isi semua dari `apps/api/.env.example` dengan `NODE_ENV=production`,
   `PAYMENT_PROVIDER=midtrans`, `STORAGE_DRIVER=s3`, `WEB_ORIGIN=https://domain-web-kamu`.
@@ -120,6 +120,7 @@ Rekomendasi gratis/murah untuk awal:
 **Web (Vercel):** root directory `platform/apps/web`, install command `cd ../.. && npm ci`,
 build command `cd ../.. && npm run build:web`. Isi environment dari `apps/web/.env.example`
 (`AUTH_URL` = domain web, `API_URL` = URL API, `API_JWT_SECRET` sama dengan API).
+Isi `ADMIN_EMAILS` dengan email kamu: akun itu otomatis menjadi Admin saat pertama masuk.
 
 **Midtrans:** Dashboard → Settings → Configuration → *Payment Notification URL*:
 `https://URL-API-KAMU/v1/payments/midtrans/notification`. Uji dengan kartu/QRIS sandbox, baru

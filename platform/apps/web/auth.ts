@@ -12,6 +12,11 @@ import { prisma } from "@/lib/db";
 
 const isProduction = process.env.NODE_ENV === "production";
 export const demoLoginEnabled = !isProduction && process.env.AUTH_DEMO_LOGIN === "true";
+// Email pemilik (dipisah koma) yang otomatis menjadi Admin saat masuk.
+// Cara aman membuat admin pertama di production tanpa akun demo.
+const adminEmails = new Set(
+  (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean),
+);
 export const googleEnabled = Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET);
 
 async function sendMagicLink({ identifier, url }: { identifier: string; url: string }) {
@@ -64,6 +69,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   providers,
   pages: { signIn: "/login", verifyRequest: "/login/check-email", error: "/login" },
+  events: {
+    async signIn({ user }) {
+      const email = user?.email?.toLowerCase();
+      if (!user?.id || !email || !adminEmails.has(email)) return;
+      const row = await prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } });
+      if (row && !row.roles.includes("ADMIN")) {
+        await prisma.user.update({ where: { id: user.id }, data: { roles: { set: [...new Set([...row.roles, "BUYER" as const, "ADMIN" as const])] } } });
+      }
+    },
+  },
   callbacks: {
     async signIn({ user }) {
       // Akun yang dinonaktifkan admin tidak bisa masuk
