@@ -277,6 +277,17 @@ export class CatalogService {
     return { personalized: false, reason: 'Produk populer di Shopia', items: popular.items };
   }
 
+  async activeVouchers() {
+    const now = new Date();
+    const rows = await this.prisma.client.voucher.findMany({
+      where: { isActive: true, startsAt: { lte: now }, OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
+      select: { code: true, description: true, type: true, value: true, minSpend: true, maxDiscount: true, endsAt: true, quota: true, usedCount: true },
+      orderBy: { createdAt: 'asc' },
+      take: 10,
+    });
+    return rows.filter((v) => v.quota === null || v.usedCount < v.quota).map(({ quota: _q, usedCount: _u, ...v }) => v);
+  }
+
   async recordView(userId: string, productId: string) {
     const exists = await this.prisma.client.product.count({ where: { id: productId, ...visibleProduct } });
     if (!exists) throw new NotFoundException('Produk tidak ditemukan');

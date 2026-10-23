@@ -140,6 +140,7 @@ export class CheckoutService {
       total: subtotal + shippingTotal - discountTotal,
       voucher: voucher ? { code: voucher.code, description: voucher.description, applied: !voucherError && discountTotal > 0, error: voucherError } : null,
       shippingNote: 'Ongkir adalah tarif perkiraan berdasarkan berat. Integrasi ongkir real-time belum diaktifkan.',
+      paymentProvider: this.payments.gateway.name,
     };
   }
 

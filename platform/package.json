@@ -13,6 +13,19 @@
   "allowScripts": {
     "@prisma/engines@7.10.1": true,
     "esbuild@0.28.2": true,
-    "prisma@7.10.1": true
+    "prisma@7.10.1": true,
+    "unrs-resolver@1.12.2": true
+  },
+  "scripts": {
+    "db:migrate": "npm run migrate:deploy -w @shopia/db",
+    "db:seed": "npm run seed -w @shopia/db",
+    "build": "npm run build -w @shopia/db && npm run build -w @shopia/api && npm run build -w @shopia/web",
+    "build:api": "npm run build -w @shopia/db && npm run build -w @shopia/api",
+    "build:web": "npm run build -w @shopia/db && npm run build -w @shopia/web",
+    "dev:api": "npm run start:dev -w @shopia/api",
+    "dev:web": "npm run dev -w @shopia/web",
+    "start:api": "node apps/api/dist/main.js",
+    "test": "npm run test -w @shopia/api && npm run test:e2e -w @shopia/api",
+    "lint": "npm run lint -w @shopia/web"
   }
 }

@@ -10,7 +10,8 @@ import { PrismaExceptionFilter } from './common/prisma-exception.filter.js';
 export function configureApp(app: NestExpressApplication) {
   const config = app.get<AppConfig>(APP_CONFIG);
   app.set('trust proxy', 1); // di belakang load balancer hosting
-  app.use(helmet());
+  // Foto produk boleh ditampilkan oleh web Shopia (domain/port berbeda). Data API tetap dilindungi CORS.
+  app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
   // Hanya web Shopia yang boleh memanggil API dari browser
   app.enableCors({ origin: config.webOrigin, credentials: false });
   app.useBodyParser('json', { limit: '1mb' });

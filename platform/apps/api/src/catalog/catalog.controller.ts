@@ -2,6 +2,8 @@ import { Controller, Get, HttpCode, Param, Post, Query } from '@nestjs/common';
 import { CurrentUser, Public, type AuthUser } from '../auth/auth.decorators.js';
 import { CatalogService } from './catalog.service.js';
 import { ProductQueryDto } from './catalog.dto.js';
+import { shippingQuotes } from '../checkout/shipping.js';
+import { clampInt } from '../common/util.js';
 
 @Controller()
 export class CatalogController {
@@ -40,6 +42,18 @@ export class CatalogController {
   @Public() @Get('recommendations')
   recommendations(@CurrentUser() user?: AuthUser) {
     return this.catalog.recommendations(user?.id);
+  }
+
+  /** Voucher yang sedang berlaku (untuk banner promo; hanya data yang benar-benar aktif) */
+  @Public() @Get('vouchers')
+  vouchers() {
+    return this.catalog.activeVouchers();
+  }
+
+  /** Perkiraan ongkir untuk berat tertentu (tarif sama dengan saat checkout) */
+  @Public() @Get('shipping/quote')
+  shippingQuote(@Query('weightGram') weight?: string) {
+    return { note: 'Tarif perkiraan berdasarkan berat. Total pasti dihitung saat checkout.', options: shippingQuotes(clampInt(weight, 1, 100_000, 1000)) };
   }
 
   @Public() @Get('stores/featured')

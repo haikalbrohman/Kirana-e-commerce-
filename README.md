@@ -1,5 +1,9 @@
 # 🛍️ Shopia — Belanja Pintar, Dibantu AI
 
+> **Versi marketplace full-stack** (multi-penjual, login Google/email, Midtrans, dasbor penjual &
+> admin, AI) ada di folder [`platform/`](platform/README.md). Folder utama ini adalah situs statis
+> yang sedang online di GitHub Pages.
+
 Website e-commerce mobile-first untuk anak muda Indonesia (18–30 tahun).
 Gaya modern-minimalis, warna utama **ungu & putih**, bahasa Indonesia, mata uang Rupiah.
 
