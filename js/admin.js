@@ -398,6 +398,7 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
     <form data-admin-form="product" novalidate>
       <div class="card step">
         <h3>📷 Foto Produk <span class="small muted" style="font-weight:400">(${st.photos.length}/${MAX_PHOTOS}, foto pertama jadi sampul)</span></h3>
+        <p class="small muted" style="margin:-4px 0 10px">📷 <b>Kamera</b> untuk memotret langsung, 🖼️ <b>Galeri</b> untuk memilih foto yang sudah ada. Tips: foto di tempat terang dengan latar polos.</p>
         <div class="admin-photos">
           ${st.photos
             .map(
@@ -411,7 +412,8 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
             .join("")}
           ${
             st.photos.length < MAX_PHOTOS
-              ? `<label class="admin-photo add"><input type="file" accept="image/*" multiple hidden data-admin-file /><span>＋</span>Tambah foto</label>`
+              ? `<label class="admin-photo add"><input type="file" accept="image/*" capture="environment" hidden data-admin-file /><span>📷</span>Kamera</label>
+                 <label class="admin-photo add"><input type="file" accept="image/*" multiple hidden data-admin-file /><span>🖼️</span>Galeri</label>`
               : ""
           }
         </div>
@@ -504,6 +506,7 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
     if (form && st.draft && e.target.name) st.draft[e.target.name] = e.target.type === "checkbox" ? e.target.checked : e.target.value;
     if (!e.target.matches("[data-admin-file]")) return;
     const files = [...e.target.files].slice(0, MAX_PHOTOS - st.photos.length);
+    e.target.value = ""; // agar foto yang sama bisa dipilih lagi
     if (!files.length) return;
     toast("Memproses foto...", { icon: "📷" });
     for (const f of files) {

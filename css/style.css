@@ -458,6 +458,6 @@ body.has-pd-actions .install-bar { display: none; }
 .admin-photo .cover { background: var(--primary); color: #fff; }
 .admin-photo .make-cover { background: rgba(255,255,255,.92); color: var(--primary-dark); }
 .admin-photo.add { border: 2px dashed var(--primary); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--primary); font-size: .75rem; font-weight: 700; cursor: pointer; }
-.admin-photo.add span { font-size: 1.8rem; line-height: 1; }
+.admin-photo.add span { font-size: 1.6rem; line-height: 1; }
 code { background: var(--primary-light); padding: 1px 5px; border-radius: 5px; font-size: .85em; }
 @media (min-width: 640px) { .admin-photos { grid-template-columns: repeat(6, 1fr); } }
