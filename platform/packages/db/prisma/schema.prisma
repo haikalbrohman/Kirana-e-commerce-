@@ -1,0 +1,572 @@
+// =====================================================================
+// SHOPIA - SKEMA DATABASE (PostgreSQL + Prisma 7)
+// ---------------------------------------------------------------------
+// Prinsip:
+// - Harga dalam Rupiah disimpan sebagai bilangan bulat (Int), tanpa desimal.
+// - Status pesanan, pembayaran, pengiriman, dan pencairan dana dipisah.
+// - Pesanan menyimpan "snapshot" harga & nama produk saat dibeli.
+// - Setiap perubahan stok dicatat di InventoryMovement.
+// - Constraint tambahan (stok >= 0, rating 1-5, dll.) ada di migrasi SQL.
+// =====================================================================
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "cjs"
+  importFileExtension = ""
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------
+// PENGGUNA & AUTENTIKASI (kompatibel dengan Auth.js Prisma Adapter)
+// ---------------------------------------------------------------------
+
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  email         String     @unique
+  emailVerified DateTime?
+  image         String?
+  phone         String?
+  roles         Role[]     @default([BUYER])
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  store         Store?
+  addresses     Address[]
+  cart          Cart?
+  orders        Order[]        @relation("BuyerOrders")
+  payments      Payment[]
+  reviews       Review[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  productViews  ProductView[]
+  aiInteractions AiInteraction[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// ---------------------------------------------------------------------
+// TOKO & KATALOG
+// ---------------------------------------------------------------------
+
+enum StoreStatus {
+  PENDING   // menunggu persetujuan admin
+  ACTIVE
+  SUSPENDED
+}
+
+model Store {
+  id          String      @id @default(cuid())
+  ownerId     String      @unique
+  name        String
+  slug        String      @unique
+  description String?
+  logoUrl     String?
+  city        String?
+  isUmkm      Boolean     @default(true)
+  status      StoreStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  products Product[]
+  orders   Order[]
+
+  @@index([status])
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  icon      String?
+  parentId  String?
+  sortOrder Int        @default(0)
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryTree")
+  products Product[]
+}
+
+enum ProductStatus {
+  DRAFT          // belum dipublikasikan penjual
+  ACTIVE         // tampil di katalog
+  REJECTED       // diturunkan oleh admin (lihat moderationNote)
+  ARCHIVED       // diarsipkan penjual
+}
+
+model Product {
+  id             String        @id @default(cuid())
+  storeId        String
+  categoryId     String
+  name           String
+  slug           String
+  description    String
+  // Spesifikasi terstruktur, mis. {"Bahan": "Katun", "Berat": "200 g"}.
+  // AI hanya boleh memakai spesifikasi yang ada di sini.
+  attributes     Json          @default("{}")
+  tags           String[]      @default([])
+  status         ProductStatus @default(DRAFT)
+  moderationNote String?
+  // Ringkasan yang dihitung ulang dari ulasan & pesanan (bukan diisi bebas)
+  ratingAvg      Float         @default(0)
+  ratingCount    Int           @default(0)
+  soldCount      Int           @default(0)
+  // Harga varian aktif termurah & total stok (diperbarui setiap varian berubah)
+  minPrice       Int           @default(0)
+  totalStock     Int           @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  store    Store            @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  category Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  variants ProductVariant[]
+  images   ProductImage[]
+  reviews  Review[]
+  views    ProductView[]
+
+  @@unique([storeId, slug])
+  @@index([status, categoryId])
+  @@index([storeId, status])
+  @@index([status, minPrice])
+}
+
+model ProductVariant {
+  id             String   @id @default(cuid())
+  productId      String
+  sku            String?
+  name           String   // mis. "Hitam / M" atau "Standar"
+  options        Json     @default("{}") // mis. {"Warna": "Hitam", "Ukuran": "M"}
+  price          Int      // harga jual (Rp)
+  compareAtPrice Int?     // harga coret; hanya valid jika > price
+  stock          Int      @default(0)
+  weightGram     Int      @default(500)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product    Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  movements  InventoryMovement[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([productId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+enum InventoryReason {
+  INITIAL
+  RESTOCK
+  ADJUSTMENT
+  ORDER_RESERVED   // stok dipotong saat pesanan dibuat
+  ORDER_RELEASED   // stok dikembalikan (pesanan batal/kedaluwarsa)
+}
+
+model InventoryMovement {
+  id        String          @id @default(cuid())
+  variantId String
+  delta     Int             // + menambah, - mengurangi
+  reason    InventoryReason
+  orderId   String?
+  actorId   String?
+  note      String?
+  createdAt DateTime        @default(now())
+
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([variantId, createdAt])
+}
+
+// ---------------------------------------------------------------------
+// KERANJANG & ALAMAT
+// ---------------------------------------------------------------------
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  variantId String
+  quantity  Int
+  createdAt DateTime @default(now())
+
+  cart    Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, variantId])
+}
+
+model Address {
+  id            String   @id @default(cuid())
+  userId        String
+  label         String   @default("Rumah")
+  recipientName String
+  phone         String
+  line1         String
+  city          String
+  province      String
+  postalCode    String
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------
+// PESANAN, PEMBAYARAN, PENGIRIMAN
+// Satu checkout = satu Payment yang bisa mencakup beberapa Order (satu per toko).
+// ---------------------------------------------------------------------
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED     // ditolak / dibatalkan
+  EXPIRED
+  REFUNDED
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  userId          String
+  provider        String        // "midtrans" atau "mock" (khusus pengembangan)
+  providerOrderId String        @unique // order_id yang dikirim ke Midtrans
+  // Kunci dari browser agar klik ganda "Bayar" tidak membuat pesanan dobel
+  idempotencyKey  String?       @unique
+  amount          Int
+  status          PaymentStatus @default(PENDING)
+  snapToken       String?
+  redirectUrl     String?
+  providerStatus  String?       // status mentah terakhir dari penyedia
+  paymentType     String?
+  paidAt          DateTime?
+  expiresAt       DateTime
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  orders Order[]
+  events PaymentEvent[]
+
+  @@index([userId, createdAt])
+  @@index([status, expiresAt])
+}
+
+// Setiap notifikasi webhook dicatat; eventKey unik menjamin idempotensi.
+model PaymentEvent {
+  id             String   @id @default(cuid())
+  provider       String
+  eventKey       String   @unique
+  paymentId      String?
+  signatureValid Boolean
+  payload        Json
+  processedAt    DateTime?
+  createdAt      DateTime @default(now())
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID           // menunggu diproses penjual
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
+
+// Pencairan dana ke penjual dicatat terpisah. Shopia TIDAK menyimpan dana;
+// pencairan dilakukan lewat mitra pembayaran berizin.
+enum PayoutStatus {
+  NOT_ELIGIBLE   // belum selesai / dibatalkan
+  PENDING        // pesanan selesai, menunggu pencairan
+  PAID_OUT
+}
+
+model Order {
+  id              String       @id @default(cuid())
+  orderNumber     String       @unique
+  buyerId         String
+  storeId         String
+  paymentId       String
+  status          OrderStatus  @default(PENDING_PAYMENT)
+  payoutStatus    PayoutStatus @default(NOT_ELIGIBLE)
+  addressSnapshot Json         // alamat saat pesanan dibuat
+  subtotal        Int
+  shippingCost    Int
+  discount        Int          @default(0)
+  total           Int
+  voucherCode     String?
+  note            String?
+  cancelReason    String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  buyer    User         @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Restrict)
+  store    Store        @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  payment  Payment      @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  items    OrderItem[]
+  shipment Shipment?
+  events   OrderEvent[]
+
+  @@index([buyerId, createdAt])
+  @@index([storeId, status])
+  @@index([paymentId])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  productId   String
+  variantId   String
+  // Snapshot saat checkout
+  productName String
+  variantName String
+  imageUrl    String?
+  unitPrice   Int
+  quantity    Int
+  lineTotal   Int
+
+  order   Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  review  Review?
+
+  @@index([orderId])
+}
+
+// Riwayat perubahan status pesanan (untuk timeline & notifikasi)
+model OrderEvent {
+  id        String      @id @default(cuid())
+  orderId   String
+  status    OrderStatus
+  note      String?
+  actorId   String?
+  createdAt DateTime    @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+}
+
+enum ShipmentStatus {
+  PENDING
+  READY_TO_SHIP
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+}
+
+model Shipment {
+  id             String         @id @default(cuid())
+  orderId        String         @unique
+  courier        String
+  service        String
+  cost           Int
+  etaText        String?
+  trackingNumber String?
+  status         ShipmentStatus @default(PENDING)
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+// ---------------------------------------------------------------------
+// ULASAN, VOUCHER, NOTIFIKASI
+// ---------------------------------------------------------------------
+
+enum ReviewStatus {
+  PUBLISHED
+  HIDDEN
+}
+
+// Hanya pembeli yang benar-benar menerima barang yang bisa mengulas (1 ulasan per item pesanan)
+model Review {
+  id          String       @id @default(cuid())
+  productId   String
+  orderItemId String       @unique
+  userId      String
+  rating      Int
+  comment     String?
+  status      ReviewStatus @default(PUBLISHED)
+  createdAt   DateTime     @default(now())
+
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([productId, createdAt])
+}
+
+enum VoucherType {
+  PERCENT
+  FIXED
+  FREE_SHIPPING
+}
+
+model Voucher {
+  id          String      @id @default(cuid())
+  code        String      @unique
+  description String
+  type        VoucherType
+  value       Int         // persen (PERCENT) atau Rupiah (FIXED)
+  minSpend    Int         @default(0)
+  maxDiscount Int?
+  quota       Int?        // null = tanpa batas
+  usedCount   Int         @default(0)
+  startsAt    DateTime    @default(now())
+  endsAt      DateTime?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+// ---------------------------------------------------------------------
+// AKTIVITAS: rekomendasi, audit, AI
+// ---------------------------------------------------------------------
+
+// Produk yang dilihat pengguna (dasar rekomendasi personal)
+model ProductView {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String   // mis. "store.approve", "product.takedown", "user.role.update"
+  entityType String
+  entityId   String
+  metadata   Json     @default("{}")
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+enum AiFeature {
+  ASSISTANT
+  SEARCH
+  COMPARE
+  SELLER_COPY
+  SELLER_INSIGHT
+}
+
+// Hanya metadata (tanpa isi percakapan) untuk pemantauan biaya & keandalan
+model AiInteraction {
+  id           String    @id @default(cuid())
+  userId       String?
+  feature      AiFeature
+  provider     String
+  model        String?
+  inputTokens  Int       @default(0)
+  outputTokens Int       @default(0)
+  latencyMs    Int       @default(0)
+  success      Boolean
+  createdAt    DateTime  @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
