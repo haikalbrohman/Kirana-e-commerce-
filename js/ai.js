@@ -1,5 +1,5 @@
 /* =====================================================================
-   SHOPIA AI - ASISTEN BELANJA PINTAR
+   KIRANA AI - ASISTEN BELANJA PINTAR
    ---------------------------------------------------------------------
    Fitur AI yang tersedia:
    1. Pencarian bahasa sehari-hari  -> "sepatu putih di bawah 300rb"
@@ -237,12 +237,12 @@ const ShopiaAI = (() => {
     const t = message.toLowerCase();
 
     if (/^(halo|hai|hi|hello|pagi|siang|sore|malam|assalam)/.test(t))
-      return { text: `Halo! 👋 Aku Shopia AI. Ceritakan saja barang yang kamu cari, misalnya "hadiah untuk pacar di bawah 200rb" atau "skincare untuk bekas jerawat".`, products: [] };
+      return { text: `Halo! 👋 Aku Kirana AI. Ceritakan saja barang yang kamu cari, misalnya "hadiah untuk pacar di bawah 200rb" atau "skincare untuk bekas jerawat".`, products: [] };
 
     if (/ongkir|ongkos kirim|pengiriman|kurir|berapa lama|sampai kapan/.test(t))
       return {
         text:
-          `Pilihan pengiriman di Shopia:\n` +
+          `Pilihan pengiriman di Kirana:\n` +
           SHIPPING.map((s) => `• ${s.name}: ${fmt(s.cost)} (${s.eta})`).join("\n") +
           `\n\nGratis ongkir Reguler untuk belanja min. ${fmt(CONFIG.freeShippingMin)} 🚚`,
         products: [],
@@ -333,7 +333,7 @@ const ShopiaAI = (() => {
       try {
         return await remoteReply(message, history);
       } catch (e) {
-        console.warn("Shopia AI: server tidak tersedia, memakai AI lokal.", e);
+        console.warn("Kirana AI: server tidak tersedia, memakai AI lokal.", e);
       }
     }
     // Jeda kecil agar terasa seperti sedang "berpikir"

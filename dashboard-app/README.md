@@ -1,4 +1,4 @@
-# Dasbor Toko Shopia
+# Dasbor Toko Kirana
 
 Dasbor ringkasan toko (React + TypeScript + Tailwind 4 + ikon Lucide), dibangun dari
 komponen `StatCard`, `BarChart`, dan `StatusPill` di `src/components/dashboard.tsx`.

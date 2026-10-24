@@ -1,5 +1,5 @@
 /* =====================================================================
-   SHOPIA - PENYIMPANAN DATA (localStorage)
+   KIRANA - PENYIMPANAN DATA (localStorage)
    ---------------------------------------------------------------------
    Semua data pengguna (keranjang, wishlist, akun, pesanan, riwayat
    dilihat) disimpan di browser sehingga TIDAK hilang saat halaman
@@ -22,7 +22,7 @@ const Store = (() => {
     orders: [], // riwayat pesanan
     viewed: [], // produk yang pernah dilihat (untuk rekomendasi AI)
     searches: [], // riwayat pencarian
-    chat: [], // riwayat chat Shopia AI
+    chat: [], // riwayat chat Kirana AI
   };
 
   // Ambil data dari localStorage (aman jika error / mode privat)

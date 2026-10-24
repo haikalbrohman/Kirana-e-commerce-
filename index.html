@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Shopia - Belanja Pintar, Dibantu AI</title>
-  <meta name="description" content="Shopia: toko online modern untuk anak muda Indonesia. Fashion, elektronik, kecantikan, dan produk UMKM lokal dengan asisten belanja AI." />
+  <title>Kirana - Belanja Pintar, Dibantu AI</title>
+  <meta name="description" content="Kirana: toko online modern untuk anak muda Indonesia. Fashion, elektronik, kecantikan, dan produk UMKM lokal dengan asisten belanja AI." />
   <meta name="theme-color" content="#f3f2f8" />
   <!-- Aplikasi (PWA): ikon, nama, dan tampilan layar penuh -->
   <link rel="manifest" href="manifest.json" />
@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Shopia" />
+  <meta name="apple-mobile-web-app-title" content="Kirana" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -23,14 +23,14 @@
   <header class="header">
     <div class="container">
       <div class="header-top">
-        <a href="#/" class="logo" aria-label="Shopia beranda"><span class="logo-mark">S</span>Shopia</a>
+        <a href="#/" class="logo" aria-label="Kirana beranda"><span class="logo-mark">K</span>Kirana</a>
 
         <!-- Pencarian (di desktop tampil di tengah header) -->
         <div class="search" id="search">
           <form id="search-form" role="search">
             <input id="search-input" type="search" placeholder='Coba: "sepatu putih di bawah 300rb"' autocomplete="off" aria-label="Cari produk" />
             <button type="submit" aria-label="Cari">🔍</button>
-            <button type="button" class="ai-chip" id="search-ai" title="Tanya Shopia AI">✨ AI</button>
+            <button type="button" class="ai-chip" id="search-ai" title="Tanya Kirana AI">✨ AI</button>
           </form>
           <div class="search-suggest hidden" id="search-suggest"></div>
         </div>
@@ -59,7 +59,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="brand">
-          <div class="logo"><span class="logo-mark">S</span>Shopia</div>
+          <div class="logo"><span class="logo-mark">K</span>Kirana</div>
           <p class="small" style="margin-top:8px">Belanja pintar untuk anak muda Indonesia. Produk pilihan, harga jujur, dibantu AI.</p>
         </div>
         <div>
@@ -75,14 +75,14 @@
           <a href="#/akun">Akun Saya</a>
         </div>
         <div>
-          <h4>Shopia</h4>
+          <h4>Kirana</h4>
           <a href="#/tentang">Tentang Kami</a>
           <a href="#/faq">Kebijakan Retur</a>
           <a href="#/admin">Dasbor Penjual</a>
           <a href="dashboard/">Dasbor Toko</a>
         </div>
       </div>
-      <div class="copy">© <span id="year"></span> Shopia. Dibuat dengan 💜 di Indonesia.</div>
+      <div class="copy">© <span id="year"></span> Kirana. Dibuat dengan 💜 di Indonesia.</div>
     </div>
   </footer>
 
@@ -90,13 +90,13 @@
   <nav class="bottom-nav" id="bottom-nav">
     <a href="#/" data-nav="/"><span class="ico">🏠</span>Beranda</a>
     <a href="#/katalog" data-nav="/katalog"><span class="ico">🗂️</span>Katalog</a>
-    <button class="ai-tab" data-open-ai><span class="ico">✨</span>Shopia AI</button>
+    <button class="ai-tab" data-open-ai><span class="ico">✨</span>Kirana AI</button>
     <a href="#/keranjang" data-nav="/keranjang"><span class="ico">🛒</span>Keranjang<span class="badge" id="cart-badge-2"></span></a>
     <a href="#/akun" data-nav="/akun"><span class="ico">👤</span>Akun</a>
   </nav>
 
   <!-- Tombol AI mengambang (desktop) -->
-  <button class="ai-float" data-open-ai aria-label="Buka Shopia AI">✨</button>
+  <button class="ai-float" data-open-ai aria-label="Buka Kirana AI">✨</button>
 
   <!-- ================= TOMBOL WHATSAPP MENGAMBANG ================= -->
   <a class="wa-float" id="wa-float" target="_blank" rel="noopener" aria-label="Chat WhatsApp">
@@ -106,7 +106,7 @@
   <!-- Ajakan install aplikasi (muncul otomatis jika bisa di-install) -->
   <div class="install-bar hidden" id="install-bar">
     <img src="icons/icon-192.png" alt="" width="40" height="40" />
-    <div class="grow"><b>Install aplikasi Shopia</b><div class="small">Belanja lebih cepat dari layar HP</div></div>
+    <div class="grow"><b>Install aplikasi Kirana</b><div class="small">Belanja lebih cepat dari layar HP</div></div>
     <button class="btn btn-primary" data-action="install-app">Install</button>
     <button class="icon-btn" data-action="install-dismiss" aria-label="Tutup">✕</button>
   </div>

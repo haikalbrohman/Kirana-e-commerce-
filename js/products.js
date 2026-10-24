@@ -1,5 +1,5 @@
 /* =====================================================================
-   SHOPIA - DAFTAR PRODUK
+   KIRANA - DAFTAR PRODUK
    ---------------------------------------------------------------------
    Cara termudah menambah/mengubah produk: buka halaman Admin di website
    (menu Akun -> Dasbor Penjual, atau alamat #/admin). Foto bisa langsung

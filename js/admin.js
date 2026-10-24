@@ -1,5 +1,5 @@
 /* =====================================================================
-   SHOPIA - DASBOR PENJUAL (ADMIN)
+   KIRANA - DASBOR PENJUAL (ADMIN)
    ---------------------------------------------------------------------
    Halaman #/admin untuk menambah, mengubah, dan menghapus produk,
    termasuk upload foto langsung dari galeri HP.
@@ -92,7 +92,7 @@ const Admin = (() => {
 
   function buildProductsFile(list) {
     return `/* =====================================================================
-   SHOPIA - DAFTAR PRODUK
+   KIRANA - DAFTAR PRODUK
    ---------------------------------------------------------------------
    Cara termudah menambah/mengubah produk: buka halaman Admin di website
    (menu Akun -> Dasbor Penjual, atau alamat #/admin). Foto bisa langsung
@@ -330,7 +330,7 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
         <h3>Cara menghubungkan (sekali saja)</h3>
         <ol class="ios-steps">
           <li><b class="n">1</b><span>Buka <a href="${tokenUrl}" target="_blank" rel="noopener" style="color:var(--primary);font-weight:700">halaman pembuatan token GitHub</a> (login jika diminta)</span></li>
-          <li><b class="n">2</b><span><b>Token name:</b> Shopia Admin. <b>Expiration:</b> pilih 1 tahun (atau sesuai keinginan)</span></li>
+          <li><b class="n">2</b><span><b>Token name:</b> Kirana Admin. <b>Expiration:</b> pilih 1 tahun (atau sesuai keinginan)</span></li>
           <li><b class="n">3</b><span><b>Repository access:</b> Only select repositories → pilih <b>${esc(gh.repo)}</b></span></li>
           <li><b class="n">4</b><span><b>Permissions → Contents:</b> ubah menjadi <b>Read and write</b></span></li>
           <li><b class="n">5</b><span>Tekan <b>Generate token</b>, salin kodenya (diawali <code>github_pat_</code>), lalu tempel di bawah</span></li>

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Token warna Shopia (sama dengan situs utama):
+/* Token warna Kirana (sama dengan situs utama):
    ungu = utama, lime = tombol aksi, hijau daun = aksen, merah = batal/habis */
 @theme {
   --color-background: #f3f2f8;

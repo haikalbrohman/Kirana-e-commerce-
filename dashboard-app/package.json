@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Dasbor toko Shopia (React + Tailwind). Hasil build disalin ke folder ../dashboard untuk GitHub Pages.",
+  "description": "Dasbor toko Kirana (React + Tailwind). Hasil build disalin ke folder ../dashboard untuk GitHub Pages.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
