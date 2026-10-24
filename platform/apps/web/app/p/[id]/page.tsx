@@ -33,48 +33,49 @@ export default async function ProductPage(props: PageProps<"/p/[id]">) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-28 pt-4 sm:pb-10">
-      <nav className="mb-4 flex items-center gap-1 text-xs text-muted" aria-label="Breadcrumb">
-        <Link href="/" className="hover:text-brand-700">Beranda</Link>
-        <IconChevronRight size={14} />
-        <Link href={`/c/${product.category.slug}`} className="hover:text-brand-700">{product.category.name}</Link>
-      </nav>
+      <div className="grid gap-x-10 gap-y-5 lg:grid-cols-2">
+        {/* Judul besar ala katalog premium (di HP tampil di atas foto) */}
+        <div className="min-w-0 lg:col-start-2">
+          <p className="text-sm font-semibold text-brand-700">{product.store.name}</p>
+          <h1 className="mt-1 text-[32px] font-light leading-[1.05] tracking-tight sm:text-[44px]">{product.name}</h1>
+          <nav className="mt-2 flex flex-wrap items-center gap-1 text-xs text-muted" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-brand-700">Beranda</Link>
+            <span aria-hidden="true">/</span>
+            <Link href={`/c/${product.category.slug}`} className="hover:text-brand-700">{product.category.name}</Link>
+          </nav>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+            {product.ratingCount > 0 ? (
+              <a href="#ulasan" className="flex items-center gap-1 rounded-full bg-white px-3 py-1 ring-1 ring-line">
+                <IconStar size={15} className="fill-amber-400 text-amber-400" />
+                <span className="font-bold">{product.ratingAvg.toFixed(1)}</span>
+                <span className="text-muted">({product.ratingCount} ulasan)</span>
+              </a>
+            ) : (
+              <span className="rounded-full bg-white px-3 py-1 text-muted ring-1 ring-line">Belum ada ulasan</span>
+            )}
+            <span className="rounded-full bg-white px-3 py-1 text-muted ring-1 ring-line">{shortNumber(product.soldCount)} terjual</span>
+          </div>
+        </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:gap-10">
-        <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-24 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:self-start">
           <Gallery images={product.images} name={product.name} icon={product.category.icon} />
         </div>
 
-        <div className="min-w-0 space-y-5">
-          <div>
-            <h1 className="text-xl font-bold leading-snug sm:text-2xl">{product.name}</h1>
-            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
-              {product.ratingCount > 0 ? (
-                <span className="flex items-center gap-1">
-                  <IconStar size={16} className="fill-amber-400 text-amber-400" />
-                  <span className="font-semibold text-ink">{product.ratingAvg.toFixed(1)}</span> ({product.ratingCount} ulasan)
-                </span>
-              ) : (
-                <span>Belum ada ulasan</span>
-              )}
-              <span>·</span>
-              <span>{shortNumber(product.soldCount)} terjual</span>
-            </div>
-          </div>
-
+        <div className="min-w-0 space-y-5 lg:col-start-2">
           <Card className="p-5">
             <BuyPanel product={product} loggedIn={!!me} />
           </Card>
 
           {/* Penjual */}
           <Card className="flex items-center gap-4 p-4">
-            <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand-50 text-lg font-black text-brand-700">{product.store.name[0]}</span>
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-aurora text-lg font-black text-white">{product.store.name[0]}</span>
             <div className="min-w-0 flex-1">
               <p className="flex items-center gap-2 font-bold">
                 {product.store.name} {product.store.isUmkm && <Badge tone="brand">UMKM</Badge>}
               </p>
               <p className="text-xs text-muted">{product.store.city} · {product.store.activeProducts} produk · bergabung {dateID(product.store.createdAt)}</p>
             </div>
-            <Link href={`/store/${product.store.slug}`} className="flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
+            <Link href={`/store/${product.store.slug}`} className="flex items-center gap-1 rounded-full bg-brand-50 px-3 py-2 text-sm font-bold text-brand-700 hover:bg-brand-100">
               <IconStore size={16} /> Kunjungi
             </Link>
           </Card>
@@ -95,7 +96,7 @@ export default async function ProductPage(props: PageProps<"/p/[id]">) {
             </Card>
           )}
 
-          <div className="flex items-center gap-3 rounded-2xl bg-brand-50 p-4 text-sm text-brand-900">
+          <div className="flex items-center gap-3 rounded-3xl bg-brand-50 p-4 text-sm text-brand-900">
             <IconShield className="shrink-0 text-brand-600" />
             <p>Dana diteruskan ke penjual setelah pesanan selesai. Pembayaran diproses aman oleh Midtrans.</p>
           </div>
@@ -105,9 +106,9 @@ export default async function ProductPage(props: PageProps<"/p/[id]">) {
             {attrs.length > 0 && (
               <>
                 <h2 className="mb-3 font-bold">Spesifikasi</h2>
-                <dl className="mb-5 divide-y divide-line text-sm">
-                  {attrs.map(([k, v]) => (
-                    <div key={k} className="grid grid-cols-[40%_1fr] gap-3 py-2">
+                <dl className="mb-5 space-y-1 text-sm">
+                  {attrs.map(([k, v], i) => (
+                    <div key={k} className={`grid grid-cols-[40%_1fr] gap-3 rounded-full px-4 py-2 ${i % 2 ? "" : "bg-canvas"}`}>
                       <dt className="text-muted">{k}</dt>
                       <dd className="font-medium">{v}</dd>
                     </div>
@@ -119,8 +120,8 @@ export default async function ProductPage(props: PageProps<"/p/[id]">) {
             <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{product.description}</p>
           </Card>
 
-          <AssistantButton prompt={`Apakah ${product.name} cocok untuk saya? Bandingkan dengan alternatif lain.`} className="flex w-full items-center gap-3 rounded-2xl border border-brand-200 bg-white p-4 text-left transition hover:bg-brand-50">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-600 text-white"><IconSparkles size={18} /></span>
+          <AssistantButton prompt={`Apakah ${product.name} cocok untuk saya? Bandingkan dengan alternatif lain.`} className="flex w-full items-center gap-3 rounded-3xl border border-leaf-200 bg-leaf-50 p-4 text-left transition hover:bg-leaf-100">
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-leafy text-white shadow-md shadow-leaf-500/30"><IconSparkles size={18} /></span>
             <span className="flex-1">
               <span className="block text-sm font-bold">Tanya Shopia AI tentang produk ini</span>
               <span className="text-xs text-muted">Cocok untuk kebutuhanmu? Ada alternatif lebih hemat?</span>
@@ -148,7 +149,7 @@ export default async function ProductPage(props: PageProps<"/p/[id]">) {
                         <div key={n} className="flex items-center gap-2 text-xs">
                           <span className="w-3 text-muted">{n}</span>
                           <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
-                            <div className="h-full rounded-full bg-amber-400" style={{ width: `${(c / totalReviews) * 100}%` }} />
+                            <div className="h-full rounded-full bg-lime-400" style={{ width: `${(c / totalReviews) * 100}%` }} />
                           </div>
                           <span className="w-5 text-right text-muted">{c}</span>
                         </div>
@@ -180,7 +181,7 @@ export default async function ProductPage(props: PageProps<"/p/[id]">) {
 
       {similar.length > 0 && (
         <section className="mt-12">
-          <SectionHeader icon={<IconSparkles className="text-brand-600" />} title="Produk serupa" subtitle="Kategori, kata kunci, dan kisaran harga yang mirip" />
+          <SectionHeader icon={<IconSparkles className="text-leaf-500" />} title="Produk serupa" subtitle="Kategori, kata kunci, dan kisaran harga yang mirip" />
           <ProductRail items={similar} />
         </section>
       )}

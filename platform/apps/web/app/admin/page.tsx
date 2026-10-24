@@ -5,7 +5,7 @@ import { ORDER_STATUS, rupiah } from "@/lib/format";
 const PRODUCT_STATUS: Record<string, string> = { ACTIVE: "Tampil", DRAFT: "Draf", REJECTED: "Diturunkan", ARCHIVED: "Diarsipkan" };
 import { Card } from "@/components/ui";
 import { Stat } from "@/components/seller/charts";
-import { IconAlert } from "@/components/icons";
+import { IconAlert, IconCard, IconChart, IconStore, IconUsers } from "@/components/icons";
 
 export const metadata = { title: "Admin" };
 type Stats = { users: number; sellers: number; stores: Record<string, number>; products: Record<string, number>; orders: Record<string, number>; gmv30d: number; paidPayments30d: number; pendingPayments: number; ai24h: { requests: number; tokens: number }; attentionNeeded30d: number };
@@ -14,7 +14,7 @@ export default async function AdminHome() {
   const s = await api<Stats>("/admin/stats");
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold tracking-tight">Ringkasan marketplace</h1>
+      <div><p className="text-sm text-muted">Halo, Admin 👋</p><h1 className="text-[28px] font-bold leading-tight tracking-tight">Ringkasan marketplace</h1></div>
       {s.attentionNeeded30d > 0 && (
         <Link href="/admin/audit?action=order.refund_required" className="flex gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
           <IconAlert className="shrink-0" /> {s.attentionNeeded30d} kejadian pembayaran perlu ditinjau (refund / nominal tidak cocok). Lihat audit log →
@@ -22,10 +22,10 @@ export default async function AdminHome() {
       )}
       {(s.stores.PENDING ?? 0) > 0 && <Link href="/admin/stores?status=PENDING" className="block rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">{s.stores.PENDING} toko menunggu persetujuan →</Link>}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 [&>*]:min-w-0">
-        <Stat label="Transaksi lunas (30 hari)" value={rupiah(s.gmv30d)} hint={`${s.paidPayments30d} pembayaran`} />
-        <Stat label="Pengguna" value={String(s.users)} hint={`${s.sellers} penjual`} />
-        <Stat label="Toko aktif" value={String(s.stores.ACTIVE ?? 0)} hint={`${s.stores.PENDING ?? 0} menunggu · ${s.stores.SUSPENDED ?? 0} nonaktif`} />
-        <Stat label="Pembayaran tertunda" value={String(s.pendingPayments)} />
+        <Stat icon={<IconChart size={17} />} label="Transaksi lunas (30 hari)" value={rupiah(s.gmv30d)} hint={`${s.paidPayments30d} pembayaran`} />
+        <Stat icon={<IconUsers size={17} />} label="Pengguna" value={String(s.users)} hint={`${s.sellers} penjual`} />
+        <Stat icon={<IconStore size={17} />} label="Toko aktif" value={String(s.stores.ACTIVE ?? 0)} hint={`${s.stores.PENDING ?? 0} menunggu · ${s.stores.SUSPENDED ?? 0} nonaktif`} />
+        <Stat icon={<IconCard size={17} />} label="Pembayaran tertunda" value={String(s.pendingPayments)} />
       </div>
       <div className="grid gap-4 lg:grid-cols-3 [&>*]:min-w-0">
         <Card className="p-5">

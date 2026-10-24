@@ -2,30 +2,53 @@
 
 /* =====================================================================
    SHOPIA DESIGN TOKENS
-   Warna utama Emerald. Ganti nilai --color-brand-* untuk mengubah tema.
+   Tiga warna dengan peran jelas:
+   - brand (indigo/ungu): identitas, tautan, elemen aktif
+   - lime: tombol aksi utama (beli, simpan, bayar)
+   - leaf (hijau daun): semua fitur AI
    ===================================================================== */
 @theme {
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-200: #a7f3d0;
-  --color-brand-300: #6ee7b7;
-  --color-brand-400: #34d399;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  --color-brand-800: #065f46;
-  --color-brand-900: #064e3b;
-  --color-brand-950: #022c22;
+  --color-brand-50: #f4f3ff;
+  --color-brand-100: #e9e7fe;
+  --color-brand-200: #d5d1fc;
+  --color-brand-300: #b6aef8;
+  --color-brand-400: #9184f2;
+  --color-brand-500: #7062e8;
+  --color-brand-600: #5a49d8;
+  --color-brand-700: #4a3abb;
+  --color-brand-800: #3d3197;
+  --color-brand-900: #332c78;
+  --color-brand-950: #1f1a48;
 
-  --color-ink: #0f172a;
-  --color-muted: #64748b;
-  --color-line: #e7ece9;
-  --color-canvas: #f7f9f8;
+  --color-lime-50: #fbfee9;
+  --color-lime-100: #f5fcc6;
+  --color-lime-200: #eef99e;
+  --color-lime-300: #e3f46c;
+  --color-lime-400: #d5eb43;
+  --color-lime-500: #bcd325;
+  --color-lime-600: #93a718;
 
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --color-leaf-50: #f0faeb;
+  --color-leaf-100: #ddf3d2;
+  --color-leaf-200: #bfe8ab;
+  --color-leaf-300: #98d97c;
+  --color-leaf-400: #72c755;
+  --color-leaf-500: #52ad36;
+  --color-leaf-600: #3f8b28;
+  --color-leaf-700: #336d23;
+  --color-leaf-800: #2b5720;
+  --color-leaf-900: #25491e;
+
+  --color-ink: #17152e;
+  --color-muted: #6a6884;
+  --color-line: #e7e5f0;
+  --color-canvas: #f3f2f8;
+
+  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
 
   --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.06);
-  --shadow-lift: 0 8px 30px rgb(4 120 87 / 0.14);
+  --shadow-lift: 0 10px 34px rgb(74 58 187 / 0.16);
+  --shadow-glow: 0 8px 24px rgb(188 211 37 / 0.45);
 
   --animate-fade-in: fade-in 0.35s ease-out both;
   --animate-slide-up: slide-up 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -65,7 +88,7 @@
 
 @layer components {
   .skeleton {
-    background: linear-gradient(90deg, #eef2f0 0px, #f8faf9 120px, #eef2f0 240px);
+    background: linear-gradient(90deg, #ecebf4 0px, #f8f7fc 120px, #ecebf4 240px);
     background-size: 800px 100%;
     @apply animate-shimmer rounded-xl;
   }
@@ -74,6 +97,13 @@
   }
   .scrollbar-none::-webkit-scrollbar {
     display: none;
+  }
+  /* Kartu gradasi ungu seperti foto produk premium */
+  .bg-aurora {
+    background: radial-gradient(120% 90% at 0% 0%, #3a35a8 0%, transparent 60%), radial-gradient(90% 90% at 100% 100%, #c8bff6 0%, transparent 65%), linear-gradient(135deg, #4b44c4 0%, #8f84f2 60%, #d9d2fb 100%);
+  }
+  .bg-leafy {
+    background: linear-gradient(135deg, #72c755 0%, #52ad36 100%);
   }
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);

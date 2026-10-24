@@ -10,19 +10,19 @@ export function ProductCard({ p, priority }: { p: Card; priority?: boolean }) {
     <Link
       href={`/p/${p.id}`}
       prefetch={priority ? true : undefined}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white transition duration-300 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift"
+      className="group relative flex flex-col overflow-hidden rounded-[26px] bg-white p-1.5 shadow-soft ring-1 ring-line/60 transition duration-300 hover:-translate-y-1 hover:shadow-lift"
     >
       <div className="relative">
-        <ProductImage src={p.imageUrl} alt={p.name} icon={p.category.icon} />
+        <ProductImage src={p.imageUrl} alt={p.name} icon={p.category.icon} className="rounded-[20px]" />
         <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
-          {p.discountPercent > 0 && <span className="rounded-lg bg-rose-600 px-1.5 py-0.5 text-[11px] font-bold text-white">-{p.discountPercent}%</span>}
-          {p.isNew && <span className="rounded-lg bg-ink/80 px-1.5 py-0.5 text-[11px] font-semibold text-white">Baru</span>}
+          {p.discountPercent > 0 && <span className="rounded-full bg-lime-300 px-2 py-0.5 text-[11px] font-extrabold text-ink shadow-sm">-{p.discountPercent}%</span>}
+          {p.isNew && <span className="rounded-full bg-white/85 px-2 py-0.5 text-[11px] font-bold text-brand-800 backdrop-blur">Baru</span>}
         </div>
         <CompareToggle id={p.id} name={p.name} className="absolute right-2 top-2 opacity-90" />
-        {!p.inStock && <div className="absolute inset-x-0 bottom-0 bg-ink/70 py-1 text-center text-xs font-semibold text-white">Stok habis</div>}
+        {!p.inStock && <div className="absolute inset-x-2 bottom-2 rounded-full bg-ink/75 py-1 text-center text-xs font-semibold text-white backdrop-blur">Stok habis</div>}
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-3">
-        <h3 className="line-clamp-2 min-h-[2.5em] text-[13px] font-medium leading-snug text-ink sm:text-sm">{p.name}</h3>
+      <div className="flex flex-1 flex-col gap-1 px-2 pb-2 pt-2.5">
+        <h3 className="line-clamp-2 min-h-[2.5em] text-[13px] font-semibold leading-snug text-ink sm:text-sm">{p.name}</h3>
         <Price price={p.price} compareAt={p.compareAtPrice} size="sm" from={p.hasMultiplePrices} />
         <div className="mt-auto flex items-center gap-1 pt-1 text-[11px] text-muted sm:text-xs">
           {p.ratingCount > 0 ? (
@@ -59,8 +59,8 @@ export function ProductGridSkeleton({ count = 10 }: { count?: number }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="overflow-hidden rounded-2xl border border-line bg-white">
-          <div className="skeleton aspect-square rounded-none" />
+        <div key={i} className="overflow-hidden rounded-[26px] bg-white p-1.5 ring-1 ring-line/60">
+          <div className="skeleton aspect-square rounded-[20px]" />
           <div className="space-y-2 p-3">
             <div className="skeleton h-3.5 w-full" />
             <div className="skeleton h-3.5 w-2/3" />

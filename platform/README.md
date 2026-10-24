@@ -38,6 +38,13 @@ Prinsip yang dipegang:
 - **AI hanya memakai data katalog**; kartu produk (harga/stok) selalu diambil dari database.
 - **Shopia tidak menyimpan dana.** Pencairan ke penjual lewat mitra pembayaran berizin.
 
+## Tampilan
+
+Token warna ada di `apps/web/app/globals.css`, masing-masing dengan peran tetap:
+**indigo/ungu** (`brand-*`) untuk identitas & elemen aktif, **lime** (`lime-*`) untuk tombol aksi
+utama, **hijau daun** (`leaf-*`) untuk semua fitur AI. Font: Urbanist. Komponen dasar memakai sudut
+membulat besar dan tombol pil (`components/ui.tsx`).
+
 ## Fitur & status
 
 | Area | Sudah jalan | Belum / tahap berikutnya |

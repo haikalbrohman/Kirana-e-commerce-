@@ -5,7 +5,7 @@ import { requireRole } from "@/lib/session";
 import { Badge, ButtonLink, Card } from "@/components/ui";
 import { SalesChart, Stat } from "@/components/seller/charts";
 import { AiInsight } from "@/components/seller/insight";
-import { IconAlert, IconPlus } from "@/components/icons";
+import { IconAlert, IconBag, IconCard, IconChart, IconPackage, IconPlus } from "@/components/icons";
 
 export const metadata = { title: "Dasbor penjual" };
 
@@ -26,7 +26,8 @@ export default async function SellerHome() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">{s.store.name}</h1>
+          <p className="text-sm text-muted">Halo 👋</p>
+          <h1 className="text-[28px] font-bold leading-tight tracking-tight">{s.store.name}</h1>
           <p className="text-sm text-muted">Ringkasan 30 hari terakhir</p>
         </div>
         <ButtonLink href="/seller/products/new"><IconPlus size={18} /> Tambah produk</ButtonLink>
@@ -40,14 +41,14 @@ export default async function SellerHome() {
       )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 [&>*]:min-w-0">
-        <Stat label="Penjualan kotor" value={rupiah(s.totals.grossSales)} hint="Harga produk, tanpa ongkir" />
-        <Stat label="Pesanan dibayar" value={String(s.totals.orders)} />
-        <Stat label="Barang terjual" value={String(s.totals.itemsSold)} />
-        <Stat label="Rata-rata pesanan" value={rupiah(s.totals.avgOrderValue)} />
+        <Stat icon={<IconChart size={17} />} label="Penjualan kotor" value={rupiah(s.totals.grossSales)} hint="Harga produk, tanpa ongkir" />
+        <Stat icon={<IconPackage size={17} />} label="Pesanan dibayar" value={String(s.totals.orders)} />
+        <Stat icon={<IconBag size={17} />} label="Barang terjual" value={String(s.totals.itemsSold)} />
+        <Stat icon={<IconCard size={17} />} label="Rata-rata pesanan" value={rupiah(s.totals.avgOrderValue)} />
       </div>
 
       <Card className="p-5">
-        <p className="mb-3 font-bold">Penjualan harian</p>
+        <p className="mb-3 font-bold">Laporan penjualan harian</p>
         <SalesChart series={s.series} />
       </Card>
 
@@ -82,7 +83,7 @@ export default async function SellerHome() {
             <ol className="space-y-2 text-sm">
               {s.topProducts.map((p, i) => (
                 <li key={p.productId} className="flex items-center gap-3">
-                  <span className="grid size-6 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">{i + 1}</span>
+                  <span className={`grid size-7 place-items-center rounded-full text-xs font-bold ${i === 0 ? "bg-lime-300 text-ink" : "bg-brand-50 text-brand-700"}`}>{i + 1}</span>
                   <span className="min-w-0 flex-1 truncate">{p.name}</span>
                   <span className="text-muted">{p.quantity}×</span>
                   <span className="font-semibold">{rupiah(p.revenue)}</span>

@@ -22,7 +22,7 @@ export default async function StorePage(props: PageProps<"/store/[slug]">) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
       <div className="overflow-hidden rounded-3xl border border-line bg-white">
-        <div className="h-24 bg-gradient-to-r from-brand-700 to-emerald-400 sm:h-32" />
+        <div className="h-24 bg-aurora sm:h-32" />
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-end">
           <span className="-mt-14 grid size-20 place-items-center rounded-2xl border-4 border-white bg-brand-50 text-3xl font-black text-brand-700 shadow-soft">{store.name[0]}</span>
           <div className="flex-1">

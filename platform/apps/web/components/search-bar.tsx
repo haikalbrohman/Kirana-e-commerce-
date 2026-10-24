@@ -18,7 +18,7 @@ export function SearchBar() {
         e.preventDefault();
         if (q.trim()) router.push(`/search?q=${encodeURIComponent(q.trim())}`);
       }}
-      className="flex h-11 flex-1 items-center rounded-xl border border-line bg-white pl-3 pr-1 transition focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/15"
+      className="flex h-11 flex-1 items-center rounded-full border border-line bg-white pl-4 pr-1 shadow-soft transition focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/15"
     >
       <IconSearch size={18} className="shrink-0 text-muted" />
       <input
@@ -33,7 +33,7 @@ export function SearchBar() {
       <button
         type="button"
         onClick={() => open(q.trim() || undefined)}
-        className="flex h-9 shrink-0 items-center gap-1 rounded-lg bg-brand-50 px-2.5 text-xs font-bold text-brand-700 hover:bg-brand-100"
+        className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-leafy px-3 text-xs font-bold text-white hover:brightness-105"
         title="Tanya Shopia AI"
       >
         <IconSparkles size={16} /> <span className="hidden sm:inline">Tanya AI</span>

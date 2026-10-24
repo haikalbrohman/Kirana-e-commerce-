@@ -5,7 +5,7 @@ import { IconChart, IconCard, IconFile, IconPackage, IconStore, IconUsers, IconS
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   await requireRole("ADMIN", "/admin");
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:grid lg:grid-cols-[220px_1fr] lg:gap-8 lg:py-8">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:grid lg:grid-cols-[240px_1fr] lg:gap-8 lg:py-8">
       <aside className="lg:sticky lg:top-24 lg:self-start">
         <SideNav
           title="Administrator"
