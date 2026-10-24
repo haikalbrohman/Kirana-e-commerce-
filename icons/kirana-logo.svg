@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f2a8f"/>
+      <stop offset=".55" stop-color="#5a49d8"/>
+      <stop offset="1" stop-color="#9d92f5"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".85" cy=".9" r=".6">
+      <stop offset="0" stop-color="#d9d2fb" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#d9d2fb" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ece9ff"/>
+    </linearGradient>
+  </defs>
+  <rect id="tile" width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="112" fill="url(#glow)"/>
+  <g transform="translate(256 270) scale(1) translate(-256 -270)">
+    <!-- handle -->
+    <path d="M184 198 V180 a72 62 0 0 1 144 0 V198" fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round"/>
+    <!-- bag body -->
+    <path d="M150 190 H362 a18 18 0 0 1 18 17 L394 398 a30 30 0 0 1 -30 32 H148 a30 30 0 0 1 -30 -32 L132 207 a18 18 0 0 1 18 -17 Z" fill="url(#bag)"/>
+    <!-- K -->
+    <g stroke="#4b44c4" stroke-width="34" stroke-linecap="round" fill="none">
+      <line x1="218" y1="254" x2="218" y2="378"/>
+      <path d="M298 254 L230 318 L300 378" stroke-linejoin="round"/>
+    </g>
+    <!-- AI sparkle -->
+    <path d="M378 92 C384 122 394 132 424 138 C394 144 384 154 378 184 C372 154 362 144 332 138 C362 132 372 122 378 92 Z" fill="#e3f46c"/>
+  </g>
+</svg>
