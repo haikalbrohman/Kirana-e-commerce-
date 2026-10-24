@@ -1,6 +1,6 @@
 /**
  * Sumber data dasbor:
- * - Produk & kategori: data asli situs Shopia (../js/products.js & ../js/data.js)
+ * - Produk & kategori: data asli situs Kirana (../js/products.js & ../js/data.js)
  * - Pesanan: riwayat checkout yang tersimpan di perangkat ini (localStorage "shopia_v1").
  *   Jika belum ada, dipakai data contoh yang ditandai jelas di layar.
  */

@@ -1,5 +1,5 @@
 /* =====================================================================
-   SHOPIA - DATA TOKO
+   KIRANA - DATA TOKO
    ---------------------------------------------------------------------
    File ini berisi SEMUA data yang bisa Anda ganti dengan mudah:
    - CONFIG     : pengaturan toko (nama, nomor WhatsApp, ongkir, AI)
@@ -12,12 +12,12 @@
    - FAQS       : pertanyaan yang sering diajukan
 
    Produk & foto paling mudah dikelola lewat halaman Admin (#/admin).
-   Jika "images" kosong, Shopia menampilkan ilustrasi emoji otomatis.
+   Jika "images" kosong, Kirana menampilkan ilustrasi emoji otomatis.
    ===================================================================== */
 
 /* ---------- Pengaturan umum toko ---------- */
 const CONFIG = {
-  storeName: "Shopia",
+  storeName: "Kirana",
   tagline: "Belanja pintar, dibantu AI",
   // Nomor WhatsApp format internasional TANPA tanda + (62 = Indonesia)
   whatsapp: "6281234567890",
@@ -77,7 +77,7 @@ const CATEGORIES = [
    maxDiscount : batas maksimal potongan (untuk percent)
 ------------------------------------------------------------------ */
 const VOUCHERS = [
-  { code: "SHOPIABARU", type: "percent", value: 15, minSpend: 100000, maxDiscount: 50000, desc: "Diskon 15% untuk pengguna baru (maks. Rp50.000)" },
+  { code: "KIRANABARU", type: "percent", value: 15, minSpend: 100000, maxDiscount: 50000, desc: "Diskon 15% untuk pengguna baru (maks. Rp50.000)" },
   { code: "HEMAT20K", type: "fixed", value: 20000, minSpend: 150000, desc: "Potongan Rp20.000 min. belanja Rp150.000" },
   { code: "GRATISONGKIR", type: "shipping", value: 0, minSpend: 50000, desc: "Gratis ongkir semua kurir, min. belanja Rp50.000" },
   { code: "UMKMJUARA", type: "percent", value: 10, minSpend: 0, maxDiscount: 25000, desc: "Diskon 10% tanpa minimal (maks. Rp25.000)" },
@@ -86,7 +86,7 @@ const VOUCHERS = [
 /* ---------- Banner promo beranda ---------- */
 const BANNERS = [
   { title: "Flash Sale 10.10", subtitle: "Diskon hingga 50% + gratis ongkir", cta: "Belanja Sekarang", link: "#/katalog?sort=diskon", bg: ["#3a35a8", "#8f84f2"], emoji: "⚡" },
-  { title: "Tanya Shopia AI", subtitle: "Cari barang cukup dengan ngobrol. Contoh: \"sepatu putih di bawah 300rb\"", cta: "Coba AI", link: "#ai", bg: ["#2f2a8f", "#7062e8"], emoji: "🤖" },
+  { title: "Tanya Kirana AI", subtitle: "Cari barang cukup dengan ngobrol. Contoh: \"sepatu putih di bawah 300rb\"", cta: "Coba AI", link: "#ai", bg: ["#2f2a8f", "#7062e8"], emoji: "🤖" },
   { title: "Dukung UMKM Lokal", subtitle: "Pakai kode UMKMJUARA, hemat 10%", cta: "Lihat Produk UMKM", link: "#/katalog?cat=umkm", bg: ["#4b44c4", "#b6aef8"], emoji: "🧺" },
 ];
 
@@ -113,6 +113,6 @@ const FAQS = [
   { q: "Metode pembayaran apa saja yang tersedia?", a: "QRIS, e-wallet (GoPay, OVO, DANA, ShopeePay), transfer virtual account bank, dan bayar di tempat (COD)." },
   { q: "Apakah bisa retur atau tukar ukuran?", a: "Bisa. Ajukan retur maksimal 7 hari setelah barang diterima, dengan kondisi barang belum dipakai dan label masih terpasang." },
   { q: "Bagaimana cara memakai kode voucher?", a: "Masukkan kode voucher di halaman Keranjang atau Checkout, lalu tekan tombol Pakai. Diskon akan langsung terlihat di ringkasan pesanan." },
-  { q: "Apa itu Shopia AI?", a: "Shopia AI adalah asisten belanja yang membantu Anda mencari produk dengan bahasa sehari-hari, memberi rekomendasi, dan merangkum ulasan pembeli." },
-  { q: "Apakah produk di Shopia original?", a: "Ya. Semua produk dikurasi dan kami memberi garansi uang kembali jika produk tidak sesuai deskripsi." },
+  { q: "Apa itu Kirana AI?", a: "Kirana AI adalah asisten belanja yang membantu Anda mencari produk dengan bahasa sehari-hari, memberi rekomendasi, dan merangkum ulasan pembeli." },
+  { q: "Apakah produk di Kirana original?", a: "Ya. Semua produk dikurasi dan kami memberi garansi uang kembali jika produk tidak sesuai deskripsi." },
 ];

@@ -1,5 +1,5 @@
 /* =====================================================================
-   SHOPIA - APLIKASI UTAMA
+   KIRANA - APLIKASI UTAMA
    ---------------------------------------------------------------------
    Website satu halaman (SPA) dengan router berbasis hash (#/...):
      #/                 Beranda
@@ -217,7 +217,7 @@ function pageHome() {
 
   <!-- Rekomendasi AI -->
   <section class="section">
-    <div class="section-head"><h2>✨ ${hasHistory ? "Pilihan AI untukmu" : "Rekomendasi Shopia"}</h2><button class="btn-link" data-open-ai style="color:var(--primary);font-weight:600;font-size:.85rem">Tanya AI</button></div>
+    <div class="section-head"><h2>✨ ${hasHistory ? "Pilihan AI untukmu" : "Rekomendasi Kirana"}</h2><button class="btn-link" data-open-ai style="color:var(--primary);font-weight:600;font-size:.85rem">Tanya AI</button></div>
     ${hasHistory ? `<p class="small muted" style="margin:-6px 0 10px">Berdasarkan produk yang kamu lihat</p>` : ""}
     ${grid(forYou.slice(0, 4))}
   </section>
@@ -274,7 +274,7 @@ function pageCatalog(params) {
     if (f.maxPrice) bits.push(`di bawah <b>${formatRupiah(f.maxPrice)}</b>`);
     if (f.minRating) bits.push(`rating ≥ <b>${f.minRating}</b>`);
     if (f.sort && !sort) sort = f.sort;
-    if (bits.length) aiNote = `<div class="ai-understood"><span>✨</span><div>Shopia AI memahami pencarianmu: ${bits.join(" · ")}</div></div>`;
+    if (bits.length) aiNote = `<div class="ai-understood"><span>✨</span><div>Kirana AI memahami pencarianmu: ${bits.join(" · ")}</div></div>`;
   }
   if (cat) list = list.filter((p) => p.category === cat);
   if (min) list = list.filter((p) => p.price >= min);
@@ -352,8 +352,8 @@ function pageCatalog(params) {
       ${
         list.length
           ? grid(list)
-          : emptyState("🔎", "Produk tidak ditemukan", "Coba kata kunci lain atau tanya Shopia AI.", "Reset pencarian") +
-            `<div style="text-align:center"><button class="btn btn-outline" data-open-ai data-prefill="${esc(q)}">✨ Tanya Shopia AI</button></div>`
+          : emptyState("🔎", "Produk tidak ditemukan", "Coba kata kunci lain atau tanya Kirana AI.", "Reset pencarian") +
+            `<div style="text-align:center"><button class="btn btn-outline" data-open-ai data-prefill="${esc(q)}">✨ Tanya Kirana AI</button></div>`
       }
     </div>
   </div>`;
@@ -680,7 +680,7 @@ function pageSuccess(id) {
     va: `Transfer ke Virtual Account: <b>8808 ${o.id.slice(-8)}</b> dalam 1×24 jam.`,
     cod: "Siapkan uang tunai saat kurir tiba. Tidak perlu bayar sekarang.",
   };
-  const msg = `Halo Shopia, saya ingin konfirmasi pesanan ${o.id} sebesar ${formatRupiah(o.total)}.`;
+  const msg = `Halo Kirana, saya ingin konfirmasi pesanan ${o.id} sebesar ${formatRupiah(o.total)}.`;
   return `
   <div class="empty" style="padding-bottom:10px">
     <div class="big">🎉</div>
@@ -708,7 +708,7 @@ function pageAccount() {
   if (!u) {
     return `
     <div style="max-width:420px;margin:0 auto">
-      <div class="hero-info" style="text-align:center"><h1>Selamat datang di Shopia 💜</h1><p>Masuk untuk menyimpan pesanan, wishlist, dan dapat rekomendasi AI yang lebih personal.</p></div>
+      <div class="hero-info" style="text-align:center"><h1>Selamat datang di Kirana 💜</h1><p>Masuk untuk menyimpan pesanan, wishlist, dan dapat rekomendasi AI yang lebih personal.</p></div>
       <div class="card" style="padding:16px;margin-top:14px">
         <div class="auth-tabs">
           <button class="${authTab === "masuk" ? "active" : ""}" data-action="auth-tab" data-tab="masuk">Masuk</button>
@@ -720,10 +720,10 @@ function pageAccount() {
           <label>Kata sandi<input class="input" name="password" type="password" required minlength="6" autocomplete="${authTab === "daftar" ? "new-password" : "current-password"}" /></label>
           <p class="voucher-err hidden" id="auth-err"></p>
           <button class="btn btn-primary btn-block" type="submit">${authTab === "daftar" ? "Daftar Sekarang" : "Masuk"}</button>
-          ${authTab === "daftar" ? `<p class="small muted" style="text-align:center">🎁 Pengguna baru dapat voucher <b>SHOPIABARU</b> diskon 15%</p>` : ""}
+          ${authTab === "daftar" ? `<p class="small muted" style="text-align:center">🎁 Pengguna baru dapat voucher <b>KIRANABARU</b> diskon 15%</p>` : ""}
         </form>
       </div>
-      ${isStandalone() ? "" : `<button class="btn btn-outline btn-block" style="margin-top:12px" data-action="install-app">📲 Install Aplikasi Shopia</button>`}
+      ${isStandalone() ? "" : `<button class="btn btn-outline btn-block" style="margin-top:12px" data-action="install-app">📲 Install Aplikasi Kirana</button>`}
       <p class="small muted" style="text-align:center;margin-top:12px">Penjual? <a href="#/admin" style="color:var(--primary);font-weight:700">🏪 Masuk Dasbor Penjual</a></p>
       ${Store.myOrders().length ? `<p class="small muted" style="text-align:center;margin-top:12px">Belanja sebagai tamu? <a href="#/pesanan" style="color:var(--primary);font-weight:700">Lihat pesanan tamu</a></p>` : ""}
     </div>`;
@@ -742,8 +742,8 @@ function pageAccount() {
   <div class="card menu-list" style="margin-top:14px">
     <a href="#/pesanan">📦 Riwayat Pesanan <span class="arrow">›</span></a>
     <a href="#/wishlist">💜 Wishlist <span class="arrow">›</span></a>
-    <button data-open-ai>✨ Tanya Shopia AI <span class="arrow">›</span></button>
-    ${isStandalone() ? "" : `<button data-action="install-app">📲 Install Aplikasi Shopia <span class="arrow">›</span></button>`}
+    <button data-open-ai>✨ Tanya Kirana AI <span class="arrow">›</span></button>
+    ${isStandalone() ? "" : `<button data-action="install-app">📲 Install Aplikasi Kirana <span class="arrow">›</span></button>`}
     <a href="#/faq">❓ Pusat Bantuan <span class="arrow">›</span></a>
     <a href="#/kontak">💬 Hubungi Kami <span class="arrow">›</span></a>
     <a href="#/admin">🏪 Dasbor Penjual <span class="arrow">›</span></a>
@@ -786,7 +786,7 @@ function pageOrders() {
         <div class="summary-row total"><span>Total</span><span>${formatRupiah(o.total)}</span></div>
         <div style="display:flex;gap:8px;margin-top:8px">
           <button class="btn btn-ghost" style="flex:1;padding:9px" data-action="reorder" data-id="${o.id}">🔁 Beli Lagi</button>
-          <a class="btn btn-outline" style="flex:1;padding:9px" target="_blank" rel="noopener" href="${waLink(`Halo Shopia, saya ingin menanyakan pesanan ${o.id}.`)}">💬 Tanya</a>
+          <a class="btn btn-outline" style="flex:1;padding:9px" target="_blank" rel="noopener" href="${waLink(`Halo Kirana, saya ingin menanyakan pesanan ${o.id}.`)}">💬 Tanya</a>
         </div>
       </div>`;
           })
@@ -808,7 +808,7 @@ function pageAbout() {
   return `
   <div class="hero-info">
     <h1>Belanja lebih pintar, bukan lebih ribet.</h1>
-    <p>Shopia lahir dari keresahan anak muda yang capek scroll ribuan produk. Kami mengkurasi produk terbaik dan menghadirkan asisten AI yang paham bahasa sehari-hari, jadi kamu bisa menemukan barang yang pas dalam hitungan detik.</p>
+    <p>Kirana lahir dari keresahan anak muda yang capek scroll ribuan produk. Kami mengkurasi produk terbaik dan menghadirkan asisten AI yang paham bahasa sehari-hari, jadi kamu bisa menemukan barang yang pas dalam hitungan detik.</p>
     <div class="stats-row"><div><b>50rb+</b>Pembeli</div><div><b>4,8★</b>Rating</div><div><b>120+</b>UMKM Mitra</div></div>
   </div>
   <div class="info-grid">
@@ -825,7 +825,7 @@ function pageContact() {
   return `
   <h1 class="page-title">Hubungi Kami</h1>
   <div class="info-grid" style="margin-top:0">
-    <a class="card info-card" target="_blank" rel="noopener" href="${waLink("Halo Shopia, saya butuh bantuan.")}"><div class="ico">💬</div><h3>WhatsApp</h3><p>+${CONFIG.whatsapp} (08.00–22.00 WIB)</p></a>
+    <a class="card info-card" target="_blank" rel="noopener" href="${waLink("Halo Kirana, saya butuh bantuan.")}"><div class="ico">💬</div><h3>WhatsApp</h3><p>+${CONFIG.whatsapp} (08.00–22.00 WIB)</p></a>
     <a class="card info-card" href="mailto:${CONFIG.email}"><div class="ico">✉️</div><h3>Email</h3><p>${CONFIG.email}</p></a>
     <div class="card info-card"><div class="ico">📍</div><h3>Alamat</h3><p>${CONFIG.address}</p></div>
   </div>
@@ -848,10 +848,10 @@ function pageFaq() {
   </div>
   <div class="ai-box" style="text-align:center;margin-top:14px">
     <h3 style="justify-content:center">Tidak menemukan jawaban?</h3>
-    <p class="small muted">Tanya Shopia AI atau chat admin kami.</p>
+    <p class="small muted">Tanya Kirana AI atau chat admin kami.</p>
     <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
       <button class="btn btn-primary" data-open-ai>✨ Tanya AI</button>
-      <a class="btn btn-outline" target="_blank" rel="noopener" href="${waLink("Halo Shopia, saya punya pertanyaan.")}">💬 WhatsApp</a>
+      <a class="btn btn-outline" target="_blank" rel="noopener" href="${waLink("Halo Kirana, saya punya pertanyaan.")}">💬 WhatsApp</a>
     </div>
   </div>`;
 }
@@ -863,7 +863,7 @@ function render(scrollTop = true) {
   const { path, params } = parseHash();
   const parts = path.split("/").filter(Boolean); // contoh: ["produk","p01"]
   let html;
-  let title = "Shopia - Belanja Pintar, Dibantu AI";
+  let title = "Kirana - Belanja Pintar, Dibantu AI";
   document.body.classList.remove("has-pd-actions");
 
   switch (parts[0]) {
@@ -872,53 +872,53 @@ function render(scrollTop = true) {
       break;
     case "katalog":
       html = pageCatalog(params);
-      title = "Katalog - Shopia";
+      title = "Katalog - Kirana";
       break;
     case "produk": {
       html = pageProduct(parts[1]);
       const p = Store.getProduct(parts[1]);
-      if (p) title = `${p.name} - Shopia`;
+      if (p) title = `${p.name} - Kirana`;
       document.body.classList.add("has-pd-actions");
       break;
     }
     case "keranjang":
       html = pageCart();
-      title = "Keranjang - Shopia";
+      title = "Keranjang - Kirana";
       break;
     case "checkout":
       html = pageCheckout();
-      title = "Checkout - Shopia";
+      title = "Checkout - Kirana";
       break;
     case "sukses":
       html = pageSuccess(parts[1]);
       break;
     case "akun":
       html = pageAccount();
-      title = "Akun - Shopia";
+      title = "Akun - Kirana";
       break;
     case "pesanan":
       html = pageOrders();
-      title = "Pesanan Saya - Shopia";
+      title = "Pesanan Saya - Kirana";
       break;
     case "wishlist":
       html = pageWishlist();
-      title = "Wishlist - Shopia";
+      title = "Wishlist - Kirana";
       break;
     case "tentang":
       html = pageAbout();
-      title = "Tentang Kami - Shopia";
+      title = "Tentang Kami - Kirana";
       break;
     case "kontak":
       html = pageContact();
-      title = "Kontak - Shopia";
+      title = "Kontak - Kirana";
       break;
     case "faq":
       html = pageFaq();
-      title = "FAQ - Shopia";
+      title = "FAQ - Kirana";
       break;
     case "admin":
       html = Admin.page();
-      title = "Dasbor Penjual - Shopia";
+      title = "Dasbor Penjual - Kirana";
       break;
     default:
       html = emptyState("🧭", "Halaman tidak ditemukan", "Link yang kamu buka mungkin salah.", "Ke Beranda", "#/");
@@ -936,7 +936,7 @@ function render(scrollTop = true) {
 
   // Tombol WhatsApp: sertakan nama produk jika sedang di halaman produk
   const p = parts[0] === "produk" ? Store.getProduct(parts[1]) : null;
-  document.getElementById("wa-float").href = waLink(p ? `Halo Shopia, saya mau tanya produk "${p.name}".` : "Halo Shopia, saya mau tanya-tanya.");
+  document.getElementById("wa-float").href = waLink(p ? `Halo Kirana, saya mau tanya produk "${p.name}".` : "Halo Kirana, saya mau tanya-tanya.");
 
   // Isi kotak pencarian sesuai query
   const si = document.getElementById("search-input");
@@ -949,7 +949,7 @@ function render(scrollTop = true) {
    INTERAKSI (event delegation: satu listener untuk semua tombol)
    ===================================================================== */
 document.addEventListener("click", (e) => {
-  // Buka Shopia AI dari tombol mana pun yang punya data-open-ai
+  // Buka Kirana AI dari tombol mana pun yang punya data-open-ai
   const aiBtn = e.target.closest("[data-open-ai]");
   if (aiBtn) {
     e.preventDefault();
@@ -1155,7 +1155,7 @@ document.addEventListener("submit", (e) => {
       err.textContent = r.message;
       return err.classList.remove("hidden");
     }
-    toast(type === "daftar" ? "Akun berhasil dibuat! Pakai voucher SHOPIABARU 🎁" : "Berhasil masuk", { icon: "🎉" });
+    toast(type === "daftar" ? "Akun berhasil dibuat! Pakai voucher KIRANABARU 🎁" : "Berhasil masuk", { icon: "🎉" });
     render();
   }
 
@@ -1197,7 +1197,7 @@ document.addEventListener("submit", (e) => {
   }
 
   if (type === "contact") {
-    window.open(waLink(`Halo Shopia, saya ${data.name} (${data.contact}).\n\n${data.message}`), "_blank");
+    window.open(waLink(`Halo Kirana, saya ${data.name} (${data.contact}).\n\n${data.message}`), "_blank");
     form.reset();
     toast("Membuka WhatsApp...", { icon: "💬" });
   }
@@ -1252,7 +1252,7 @@ function closeModal() {
 }
 
 /* =====================================================================
-   PANEL CHAT SHOPIA AI
+   PANEL CHAT KIRANA AI
    ===================================================================== */
 const AI_SUGGESTIONS = ["Rekomendasi buat aku", "Kado di bawah 200rb", "Sepatu putih", "Skincare untuk jerawat", "Ada voucher apa?", "Berapa ongkirnya?", "Status pesananku"];
 let aiBusy = false;
@@ -1260,17 +1260,17 @@ let aiBusy = false;
 function openAI(prefill = "") {
   const greeting = {
     role: "assistant",
-    text: `Hai${Store.user() ? " " + Store.user().name.split(" ")[0] : ""}! 👋 Aku Shopia AI, asisten belanjamu.\nCeritakan apa yang kamu cari — misalnya budget, untuk siapa, atau warna favorit — dan aku carikan yang paling pas.`,
+    text: `Hai${Store.user() ? " " + Store.user().name.split(" ")[0] : ""}! 👋 Aku Kirana AI, asisten belanjamu.\nCeritakan apa yang kamu cari — misalnya budget, untuk siapa, atau warna favorit — dan aku carikan yang paling pas.`,
     products: [],
   };
   const msgs = Store.state.chat.length ? Store.state.chat : [greeting];
 
   modalRoot.innerHTML = `
   <div class="ai-panel" data-close-ai>
-    <div class="ai-sheet" role="dialog" aria-label="Shopia AI">
+    <div class="ai-sheet" role="dialog" aria-label="Kirana AI">
       <div class="ai-head">
         <span class="bot">✨</span>
-        <div><b>Shopia AI</b><small>${CONFIG.aiEndpoint ? "Ditenagai Claude" : "Asisten belanja pintar"} · online</small></div>
+        <div><b>Kirana AI</b><small>${CONFIG.aiEndpoint ? "Ditenagai Claude" : "Asisten belanja pintar"} · online</small></div>
         <button class="icon-btn" data-ai-clear title="Hapus percakapan" aria-label="Hapus percakapan" style="margin-left:auto">🗑️</button>
         <button class="icon-btn" data-close-ai aria-label="Tutup" style="margin-left:0">✕</button>
       </div>
@@ -1368,7 +1368,7 @@ searchInput.addEventListener("input", () => {
     `<div class="hint">✨ Tekan Enter untuk pencarian AI: "${esc(q)}"</div>` +
     (products.length
       ? products.map((p) => `<a href="#/produk/${p.id}"><span>${p.emoji}</span><span style="flex:1">${esc(p.name)}</span><b style="color:var(--primary)">${formatRupiah(p.price)}</b></a>`).join("")
-      : `<a href="#" data-open-ai data-prefill="${esc(q)}">🤖 Tanya Shopia AI tentang "${esc(q)}"</a>`);
+      : `<a href="#" data-open-ai data-prefill="${esc(q)}">🤖 Tanya Kirana AI tentang "${esc(q)}"</a>`);
   suggestBox.classList.remove("hidden");
 });
 
@@ -1463,7 +1463,7 @@ if (isIOS() && !isStandalone()) setTimeout(showInstallBar, 6000);
 
 window.addEventListener("appinstalled", () => {
   document.getElementById("install-bar").classList.add("hidden");
-  toast("Shopia berhasil di-install! Cek layar utama HP-mu 🎉", { icon: "📲" });
+  toast("Kirana berhasil di-install! Cek layar utama HP-mu 🎉", { icon: "📲" });
 });
 
 async function installApp() {
@@ -1478,10 +1478,10 @@ async function installApp() {
   const ios = isIOS();
   modalRoot.innerHTML = `
   <div class="filter-panel" data-close-modal>
-    <div class="modal-sheet" role="dialog" aria-label="Cara install Shopia">
+    <div class="modal-sheet" role="dialog" aria-label="Cara install Kirana">
       <div class="modal-head" style="align-items:center">
         <img src="icons/icon-192.png" alt="" width="56" height="56" style="border-radius:14px" />
-        <div style="flex:1"><b>Install aplikasi Shopia</b><div class="small muted">Gratis, tidak memakan banyak memori</div></div>
+        <div style="flex:1"><b>Install aplikasi Kirana</b><div class="small muted">Gratis, tidak memakan banyak memori</div></div>
         <button class="icon-btn" data-close-modal aria-label="Tutup">✕</button>
       </div>
       <ol class="ios-steps">
@@ -1489,10 +1489,10 @@ async function installApp() {
           ios
             ? `<li><b class="n">1</b><span>Tekan tombol <b>Bagikan</b> (kotak dengan panah ke atas ⬆️) di Safari</span></li>
                <li><b class="n">2</b><span>Geser ke bawah, pilih <b>Tambah ke Layar Utama</b> ➕</span></li>
-               <li><b class="n">3</b><span>Tekan <b>Tambah</b>. Ikon Shopia muncul di layar HP</span></li>`
+               <li><b class="n">3</b><span>Tekan <b>Tambah</b>. Ikon Kirana muncul di layar HP</span></li>`
             : `<li><b class="n">1</b><span>Tekan menu <b>⋮</b> di pojok kanan atas browser</span></li>
                <li><b class="n">2</b><span>Pilih <b>Install aplikasi</b> atau <b>Tambahkan ke layar utama</b></span></li>
-               <li><b class="n">3</b><span>Tekan <b>Install</b>. Ikon Shopia muncul di layar HP</span></li>`
+               <li><b class="n">3</b><span>Tekan <b>Install</b>. Ikon Kirana muncul di layar HP</span></li>`
         }
       </ol>
     </div>

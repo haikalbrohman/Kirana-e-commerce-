@@ -1,7 +1,7 @@
 /* =====================================================================
-   SHOPIA AI - SERVER (Vercel Serverless Function)
+   KIRANA AI - SERVER (Vercel Serverless Function)
    ---------------------------------------------------------------------
-   File ini OPSIONAL. Dipakai jika ingin Shopia AI ditenagai Claude
+   File ini OPSIONAL. Dipakai jika ingin Kirana AI ditenagai Claude
    (AI sungguhan) dan bukan AI lokal bawaan.
 
    Cara pakai:
@@ -22,7 +22,7 @@ const MAX_MESSAGE_LENGTH = 1000;
 const MAX_HISTORY = 10;
 
 function buildSystemPrompt(catalog, store) {
-  return `Kamu adalah "Shopia AI", asisten belanja di toko online Shopia (Indonesia).
+  return `Kamu adalah "Kirana AI", asisten belanja di toko online Kirana (Indonesia).
 Gaya bicara: ramah, santai, singkat (maksimal 4-5 kalimat), bahasa Indonesia sehari-hari, boleh pakai emoji secukupnya.
 
 Tugasmu:
@@ -31,7 +31,7 @@ Tugasmu:
 - Hanya rekomendasikan produk yang ADA di katalog. Jangan mengarang produk, harga, atau stok.
 - Saat merekomendasikan produk, sebutkan ID-nya dengan format [[id]] (contoh: [[p03]]) agar website menampilkan kartu produknya. Maksimal 4 produk.
 - Harga ditulis dalam format Rupiah, contoh Rp149.000.
-- Jika pertanyaan di luar urusan belanja di Shopia, arahkan kembali dengan sopan.
+- Jika pertanyaan di luar urusan belanja di Kirana, arahkan kembali dengan sopan.
 - Untuk keluhan pesanan atau hal yang butuh admin, sarankan menekan tombol WhatsApp.
 
 Data toko:

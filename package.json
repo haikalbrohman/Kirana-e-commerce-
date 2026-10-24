@@ -1,8 +1,8 @@
 {
-  "name": "shopia",
+  "name": "kirana",
   "version": "1.0.0",
   "private": true,
-  "description": "Shopia - website e-commerce mobile-first dengan asisten belanja AI",
+  "description": "Kirana - website e-commerce mobile-first dengan asisten belanja AI",
   "type": "module",
   "scripts": {
     "start": "npx --yes serve -l 3000 ."

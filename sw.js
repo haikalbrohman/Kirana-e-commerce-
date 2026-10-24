@@ -1,5 +1,5 @@
 /* =====================================================================
-   SHOPIA - SERVICE WORKER (membuat Shopia bisa di-install & dibuka offline)
+   KIRANA - SERVICE WORKER (membuat Kirana bisa di-install & dibuka offline)
    ---------------------------------------------------------------------
    Strategi: "network-first"
    - Saat online : selalu ambil versi terbaru dari server (produk baru
@@ -8,7 +8,7 @@
    Naikkan angka VERSION jika ingin menghapus semua salinan lama.
    ===================================================================== */
 
-const VERSION = "shopia-v6";
+const VERSION = "kirana-v7";
 
 // File inti yang disimpan saat aplikasi pertama kali di-install
 const APP_SHELL = [

@@ -40,7 +40,7 @@ export default function App() {
             <ArrowLeft className="size-5" />
           </a>
           <div className="min-w-0 flex-1">
-            <p className="text-xs text-muted-foreground">Shopia</p>
+            <p className="text-xs text-muted-foreground">Kirana</p>
             <h1 className="truncate text-lg font-bold leading-tight">Dasbor Toko</h1>
           </div>
           <a href="../#/admin" className="rounded-full bg-lime px-4 py-2.5 text-sm font-bold shadow-[0_8px_22px_rgb(188_211_37/0.45)] hover:brightness-95">
