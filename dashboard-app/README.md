@@ -17,4 +17,5 @@ npm run dev     # pratinjau lokal
 npm run build   # hasil masuk ke ../dashboard (yang dibuka GitHub Pages)
 ```
 
-Setelah `npm run build`, commit folder `dashboard/` agar perubahan tampil online.
+Setiap push ke branch `main` otomatis membangun dasbor dan menerbitkan situs ke GitHub Pages
+(workflow `.github/workflows/deploy-pages.yml`), jadi folder `dashboard/` tidak perlu di-build manual.
