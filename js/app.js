@@ -113,6 +113,9 @@ const variantKeys = (p) => Object.keys(p.variants || {}).filter((k) => (p.varian
    KOMPONEN
    ===================================================================== */
 
+// Pilihan pendek (S/M/L/XL, 39/40) tampil sebagai pil lime bersegmen
+const isCompact = (values) => values.every((v) => String(v).length <= 4);
+
 function productCard(p, { compact = false } = {}) {
   const d = discountPct(p);
   const wished = Store.inWishlist(p.id);
@@ -398,18 +401,18 @@ function pageProduct(id) {
 
     <div>
       <div class="pd-box">
-        <div class="pd-price">
-          <span class="price">${formatRupiah(p.price)}</span>
-          ${d ? `<span class="price-old">${formatRupiah(p.originalPrice)}</span><span class="pill" style="background:#fee2e2;color:#b91c1c">-${d}%</span>` : ""}
-        </div>
+        <span class="small" style="color:var(--primary);font-weight:700">${esc(categoryName(p.category))}</span>
         <h1 class="pd-name">${esc(p.name)}</h1>
         <div class="pd-stats">
           <span>${p.rating > 0 ? `<span class="stars">★</span> ${p.rating} (${p.reviews.length} ulasan)` : "✨ Produk baru"}</span>
           <span>${formatSold(p.sold)} terjual</span>
           <span style="color:${p.stock < 20 ? "var(--danger)" : "inherit"}">Stok: ${p.stock}</span>
         </div>
+        <div class="pd-price" style="margin-top:14px">
+          <span class="price">${formatRupiah(p.price)}</span>
+          ${d ? `<span class="price-old">${formatRupiah(p.originalPrice)}</span><span class="pill pill-lime">-${d}%</span>` : ""}
+        </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-          <span class="pill pill-primary">${esc(categoryName(p.category))}</span>
           ${p.price >= CONFIG.freeShippingMin ? `<span class="pill pill-success">🚚 Gratis Ongkir</span>` : ""}
           ${p.flashSale ? `<span class="pill pill-accent">⚡ Flash Sale</span>` : ""}
         </div>
@@ -419,7 +422,7 @@ function pageProduct(id) {
             (k) => `
           <div class="variant-group">
             <h4>${labels[k] || k}: <span class="muted" style="font-weight:400">${esc(pdState.variant[k] || "pilih")}</span></h4>
-            <div class="variant-opts">
+            <div class="variant-opts${isCompact(p.variants[k]) ? " compact" : ""}">
               ${p.variants[k].map((v) => `<button class="${pdState.variant[k] === v ? "active" : ""}" data-action="pd-variant" data-key="${k}" data-value="${esc(v)}">${esc(v)}</button>`).join("")}
             </div>
           </div>`
@@ -437,8 +440,8 @@ function pageProduct(id) {
 
         <div class="pd-actions">
           <button class="btn btn-ghost chat-btn" data-action="wish" data-id="${p.id}" aria-label="Wishlist">${wished ? "💜" : "🤍"}</button>
-          <button class="btn btn-outline" data-action="pd-add" ${p.stock <= 0 ? "disabled" : ""}>🛒 Keranjang</button>
-          <button class="btn btn-primary" data-action="pd-buy" ${p.stock <= 0 ? "disabled" : ""}>Beli Sekarang</button>
+          <button class="btn btn-primary" data-action="pd-add" ${p.stock <= 0 ? "disabled" : ""}>🛒 Keranjang</button>
+          <button class="btn btn-dark" data-action="pd-buy" ${p.stock <= 0 ? "disabled" : ""}>Beli Sekarang</button>
         </div>
       </div>
 
@@ -1218,7 +1221,7 @@ function openVariantModal(p) {
         </div>
         ${keys
           .map(
-            (k) => `<div class="variant-group"><h4>${labels[k] || k}</h4><div class="variant-opts">${p.variants[k]
+            (k) => `<div class="variant-group"><h4>${labels[k] || k}</h4><div class="variant-opts${isCompact(p.variants[k]) ? " compact" : ""}">${p.variants[k]
               .map((v) => `<button class="${sel[k] === v ? "active" : ""}" data-pick="${k}" data-value="${esc(v)}">${esc(v)}</button>`)
               .join("")}</div></div>`
           )

@@ -85,9 +85,9 @@ const VOUCHERS = [
 
 /* ---------- Banner promo beranda ---------- */
 const BANNERS = [
-  { title: "Flash Sale 10.10", subtitle: "Diskon hingga 50% + gratis ongkir", cta: "Belanja Sekarang", link: "#/katalog?sort=diskon", bg: ["#7c3aed", "#a855f7"], emoji: "⚡" },
-  { title: "Tanya Shopia AI", subtitle: "Cari barang cukup dengan ngobrol. Contoh: \"sepatu putih di bawah 300rb\"", cta: "Coba AI", link: "#ai", bg: ["#4c1d95", "#7c3aed"], emoji: "🤖" },
-  { title: "Dukung UMKM Lokal", subtitle: "Pakai kode UMKMJUARA, hemat 10%", cta: "Lihat Produk UMKM", link: "#/katalog?cat=umkm", bg: ["#6d28d9", "#c084fc"], emoji: "🧺" },
+  { title: "Flash Sale 10.10", subtitle: "Diskon hingga 50% + gratis ongkir", cta: "Belanja Sekarang", link: "#/katalog?sort=diskon", bg: ["#3a35a8", "#8f84f2"], emoji: "⚡" },
+  { title: "Tanya Shopia AI", subtitle: "Cari barang cukup dengan ngobrol. Contoh: \"sepatu putih di bawah 300rb\"", cta: "Coba AI", link: "#ai", bg: ["#2f2a8f", "#7062e8"], emoji: "🤖" },
+  { title: "Dukung UMKM Lokal", subtitle: "Pakai kode UMKMJUARA, hemat 10%", cta: "Lihat Produk UMKM", link: "#/katalog?cat=umkm", bg: ["#4b44c4", "#b6aef8"], emoji: "🧺" },
 ];
 
 /* ---------- Pilihan pengiriman ---------- */

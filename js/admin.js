@@ -356,15 +356,62 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
     const q = st.query.toLowerCase();
     const list = st.products.filter((p) => !q || p.name.toLowerCase().includes(q));
     const lowStock = st.products.filter((p) => p.stock <= 5).length;
+    const totalStock = st.products.reduce((n, p) => n + (Number(p.stock) || 0), 0);
+    const stockValue = st.products.reduce((n, p) => n + (Number(p.stock) || 0) * (Number(p.price) || 0), 0);
+
+    // Grafik: ungu = total stok, hijau = jumlah produk, per kategori
+    const perCat = CATEGORIES.map((c) => {
+      const items = st.products.filter((p) => p.category === c.id);
+      return { c, count: items.length, stock: items.reduce((n, p) => n + (Number(p.stock) || 0), 0) };
+    });
+    const maxStock = Math.max(1, ...perCat.map((x) => x.stock));
+    const maxCount = Math.max(1, ...perCat.map((x) => x.count));
+
+    // Catatan otomatis dari data produk (aturan sederhana, bukan model AI)
+    const tips = [];
+    const empty = st.products.filter((p) => p.stock <= 0);
+    const noPhoto = st.products.filter((p) => !(p.images || []).length);
+    const top = perCat.slice().sort((a, b) => b.count - a.count)[0];
+    if (empty.length) tips.push(`${empty.length} produk stoknya habis. Tambah stok agar tetap bisa dibeli.`);
+    else if (lowStock) tips.push(`${lowStock} produk stoknya tinggal 5 atau kurang. Siapkan stok tambahan.`);
+    if (noPhoto.length) tips.push(`${noPhoto.length} produk belum punya foto asli. Foto nyata membuat pembeli lebih percaya.`);
+    if (top && top.count) tips.push(`Kategori terbanyak: ${top.c.icon} ${top.c.name} (${top.count} produk).`);
+    if (!tips.length) tips.push("Stok dan foto produkmu sudah rapi. Pertahankan!");
+
+    const status = (n) => (n <= 0 ? `<span class="status out">Habis</span>` : n <= 5 ? `<span class="status low">Menipis</span>` : `<span class="status ok">Aman</span>`);
+
     return `
-    <div class="section-head" style="margin-top:18px"><h1 class="page-title" style="margin:0">🏪 Dasbor Penjual</h1><button class="btn btn-ghost" style="padding:8px 12px" data-admin="logout">Keluar</button></div>
-    <div class="perks" style="grid-template-columns:repeat(3,1fr)">
-      <div class="perk"><span>📦</span>${st.products.length} Produk</div>
-      <div class="perk"><span>🧮</span>${st.products.reduce((n, p) => n + (Number(p.stock) || 0), 0)} Stok</div>
-      <div class="perk" style="${lowStock ? "color:var(--danger)" : ""}"><span>⚠️</span>${lowStock} Stok Menipis</div>
+    <div class="dash-head">
+      <div><div class="hello">Halo 👋</div><h1>Dasbor Penjual</h1></div>
+      <button class="btn btn-ghost" style="padding:9px 16px" data-admin="logout">Keluar</button>
     </div>
-    <button class="btn btn-primary btn-block" style="margin-top:14px" data-admin="new" ${st.saving ? "disabled" : ""}>＋ Tambah Produk</button>
-    <input class="input" style="margin-top:10px" placeholder="🔍 Cari produk..." value="${esc(st.query)}" data-admin-search aria-label="Cari produk" />
+    <div class="stat-grid">
+      <div class="stat"><div class="ico">📦</div><div class="lbl">Produk</div><div class="val">${st.products.length}</div></div>
+      <div class="stat"><div class="ico">🧮</div><div class="lbl">Total stok</div><div class="val">${totalStock}</div></div>
+      <div class="stat ${lowStock ? "warn" : ""}"><div class="ico">⚠️</div><div class="lbl">Stok menipis</div><div class="val">${lowStock}</div></div>
+      <div class="stat"><div class="ico">💰</div><div class="lbl">Nilai stok</div><div class="val">${formatRupiah(stockValue)}</div></div>
+    </div>
+    <div class="dash-grid">
+      <div class="card chart-card">
+        <h3>Stok per kategori</h3>
+        <div class="legend"><span><i style="background:#9184f2"></i>Stok</span><span><i style="background:#72c755"></i>Jumlah produk</span></div>
+        <div class="bars" role="img" aria-label="Grafik stok per kategori">
+          ${perCat.map((x) => `<div class="bar-col" title="${esc(x.c.name)}: ${x.stock} stok, ${x.count} produk"><i class="b1" style="height:${Math.round((x.stock / maxStock) * 62)}%"></i><i class="b2" style="height:${Math.round((x.count / maxCount) * 30)}%"></i></div>`).join("")}
+        </div>
+        <div class="bar-labels">${perCat.map((x) => `<span title="${esc(x.c.name)}">${x.c.icon}</span>`).join("")}</div>
+      </div>
+      <div class="insight">
+        <div class="bot">✨</div>
+        <h3>Catatan untuk tokomu</h3>
+        <p class="small muted">Dihitung otomatis dari stok & foto produk</p>
+        <ul>${tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+      </div>
+    </div>
+    <div class="list-head">
+      <h2>Daftar produk</h2>
+      <button class="btn btn-primary" style="padding:10px 16px" data-admin="new" ${st.saving ? "disabled" : ""}>＋ Tambah Produk</button>
+    </div>
+    <input class="input" placeholder="🔍 Cari produk..." value="${esc(st.query)}" data-admin-search aria-label="Cari produk" />
     ${st.saving ? `<p class="small" style="margin-top:10px;color:var(--primary)">⏳ Menyimpan perubahan...</p>` : ""}
     <div style="margin-top:12px">
       ${list
@@ -377,7 +424,7 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
             <span class="small muted">${esc(categoryName(p.category))} · ${(p.images || []).length} foto</span>
             <span class="price" style="font-size:.95rem">${formatRupiah(p.price)}</span>
             <div class="row">
-              <span class="small" style="color:${p.stock <= 5 ? "var(--danger)" : "var(--muted)"}">Stok: ${p.stock}</span>
+              <span class="small" style="display:flex;gap:6px;align-items:center;color:var(--muted)">Stok ${p.stock} ${status(Number(p.stock) || 0)}</span>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-ghost" style="padding:6px 12px;font-size:.8rem" data-admin="edit" data-id="${esc(p.id)}" ${st.saving ? "disabled" : ""}>✏️ Edit</button>
                 <button class="btn" style="padding:6px 10px;font-size:.8rem;color:var(--danger)" data-admin="delete" data-id="${esc(p.id)}" ${st.saving ? "disabled" : ""}>🗑️</button>
