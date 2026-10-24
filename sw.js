@@ -8,7 +8,7 @@
    Naikkan angka VERSION jika ingin menghapus semua salinan lama.
    ===================================================================== */
 
-const VERSION = "kirana-v8";
+const VERSION = "kirana-v9";
 
 // File inti yang disimpan saat aplikasi pertama kali di-install
 const APP_SHELL = [
@@ -24,6 +24,7 @@ const APP_SHELL = [
   "./manifest.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./icons/logo-mark.png",
 ];
 
 self.addEventListener("install", (event) => {

@@ -690,3 +690,6 @@ body { padding-bottom: 96px; }
   .dash-grid { grid-template-columns: 1.6fr 1fr; }
   .wa-float, body.has-pd-actions .wa-float { bottom: 24px; }
 }
+
+/* Logo Kirana (gambar) */
+img.logo-mark { display: block; width: 36px; height: 36px; border-radius: 10px; background: none; box-shadow: 0 4px 12px rgba(4, 28, 77, .3); }
