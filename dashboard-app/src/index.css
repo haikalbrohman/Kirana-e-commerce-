@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* Token warna Shopia (sama dengan situs utama):
+   ungu = utama, lime = tombol aksi, hijau daun = aksen, merah = batal/habis */
+@theme {
+  --color-background: #f3f2f8;
+  --color-foreground: #17152e;
+  --color-card: #ffffff;
+  --color-border: #e7e5f0;
+  --color-muted-foreground: #6a6884;
+  --color-primary: #5a49d8;
+  --color-primary-soft: #ece9fe;
+  --color-accent: #dff3d4;
+  --color-accent-foreground: #2b5720;
+  --color-gold: #f5b301;
+  --color-sale: #e11d48;
+  --color-lime: #e3f46c;
+  --font-sans: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+  --shadow-soft: 0 1px 2px rgb(23 21 46 / 0.04), 0 4px 16px rgb(23 21 46 / 0.06);
+}
+
+@layer base {
+  *, ::before, ::after { border-color: var(--color-border); }
+  html { -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-background text-foreground antialiased; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-primary; }
+}

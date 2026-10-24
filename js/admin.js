@@ -383,7 +383,7 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
     return `
     <div class="dash-head">
       <div><div class="hello">Halo 👋</div><h1>Dasbor Penjual</h1></div>
-      <button class="btn btn-ghost" style="padding:9px 16px" data-admin="logout">Keluar</button>
+      <div style="display:flex;gap:6px"><a class="btn btn-ghost" style="padding:9px 14px" href="dashboard/">📊 Penjualan</a><button class="btn btn-ghost" style="padding:9px 16px" data-admin="logout">Keluar</button></div>
     </div>
     <div class="stat-grid">
       <div class="stat"><div class="ico">📦</div><div class="lbl">Produk</div><div class="val">${st.products.length}</div></div>
