@@ -85,9 +85,9 @@ const VOUCHERS = [
 
 /* ---------- Banner promo beranda ---------- */
 const BANNERS = [
-  { title: "Flash Sale 10.10", subtitle: "Diskon hingga 50% + gratis ongkir", cta: "Belanja Sekarang", link: "#/katalog?sort=diskon", bg: ["#3a35a8", "#8f84f2"], emoji: "⚡" },
-  { title: "Tanya Kirana AI", subtitle: "Cari barang cukup dengan ngobrol. Contoh: \"sepatu putih di bawah 300rb\"", cta: "Coba AI", link: "#ai", bg: ["#2f2a8f", "#7062e8"], emoji: "🤖" },
-  { title: "Dukung UMKM Lokal", subtitle: "Pakai kode UMKMJUARA, hemat 10%", cta: "Lihat Produk UMKM", link: "#/katalog?cat=umkm", bg: ["#4b44c4", "#b6aef8"], emoji: "🧺" },
+  { title: "Flash Sale 10.10", subtitle: "Diskon hingga 50% + gratis ongkir", cta: "Belanja Sekarang", link: "#/katalog?sort=diskon", bg: ["#0a3fd8", "#22a6ff"], emoji: "⚡" },
+  { title: "Tanya Kirana AI", subtitle: "Cari barang cukup dengan ngobrol. Contoh: \"sepatu putih di bawah 300rb\"", cta: "Coba AI", link: "#ai", bg: ["#0838b8", "#1f8bff"], emoji: "🤖" },
+  { title: "Dukung UMKM Lokal", subtitle: "Pakai kode UMKMJUARA, hemat 10%", cta: "Lihat Produk UMKM", link: "#/katalog?cat=umkm", bg: ["#1a5cff", "#5fd0ff"], emoji: "🧺" },
 ];
 
 /* ---------- Pilihan pengiriman ---------- */

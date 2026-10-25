@@ -394,7 +394,7 @@ const PRODUCTS = ${JSON.stringify(list, null, 2)};
     <div class="dash-grid">
       <div class="card chart-card">
         <h3>Stok per kategori</h3>
-        <div class="legend"><span><i style="background:#9184f2"></i>Stok</span><span><i style="background:#72c755"></i>Jumlah produk</span></div>
+        <div class="legend"><span><i style="background:#5b8cff"></i>Stok</span><span><i style="background:#72c755"></i>Jumlah produk</span></div>
         <div class="bars" role="img" aria-label="Grafik stok per kategori">
           ${perCat.map((x) => `<div class="bar-col" title="${esc(x.c.name)}: ${x.stock} stok, ${x.count} produk"><i class="b1" style="height:${Math.round((x.stock / maxStock) * 62)}%"></i><i class="b2" style="height:${Math.round((x.count / maxCount) * 30)}%"></i></div>`).join("")}
         </div>
