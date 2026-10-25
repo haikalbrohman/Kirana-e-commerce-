@@ -40,10 +40,13 @@ export default function App() {
             <ArrowLeft className="size-5" />
           </a>
           <div className="min-w-0 flex-1">
-            <p className="text-xs text-muted-foreground">Kirana</p>
+            <p className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+              <img src="../icons/logo-mark.png" alt="" className="size-4 rounded" />
+              Kirana
+            </p>
             <h1 className="truncate text-lg font-bold leading-tight">Dasbor Toko</h1>
           </div>
-          <a href="../#/admin" className="rounded-full bg-lime px-4 py-2.5 text-sm font-bold shadow-[0_8px_22px_rgb(188_211_37/0.45)] hover:brightness-95">
+          <a href="../#/admin" className="rounded-full bg-lime px-4 py-2.5 text-sm font-bold shadow-[0_8px_22px_rgb(255_159_10/0.45)] hover:brightness-95">
             Kelola produk
           </a>
         </div>
