@@ -943,6 +943,7 @@ function render(scrollTop = true) {
   if (document.activeElement !== si) si.value = parts[0] === "katalog" ? params.get("q") || "" : "";
 
   tickCountdown();
+  scheduleAINudge(parts);
 }
 
 /* =====================================================================
@@ -1516,6 +1517,88 @@ document.addEventListener("click", (e) => {
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch((err) => console.warn("Service worker gagal:", err)));
 }
+
+/* =====================================================================
+   SAPAAN OTOMATIS KIRANA AI
+   ---------------------------------------------------------------------
+   Beberapa detik setelah halaman dibuka, muncul gelembung kecil dari
+   Kirana AI yang menawarkan bantuan sesuai halaman. Tidak memaksa:
+   hilang sendiri, dan tiap jenis sapaan hanya muncul sekali per kunjungan.
+   ===================================================================== */
+const AI_NUDGE_DELAY = 5000; // jeda sebelum sapaan muncul (milidetik)
+const AI_NUDGE_SHOW = 15000; // lama sapaan tampil sebelum hilang sendiri
+let aiNudgeTimer = null;
+let aiNudgeHideTimer = null;
+
+function aiNudgeFor(parts) {
+  const name = Store.user() ? " " + Store.user().name.split(" ")[0] : "";
+  switch (parts[0]) {
+    case undefined:
+      return { key: "home", text: `Hai${name}! 👋 Bingung mau beli apa? Ceritakan saja, aku bantu carikan yang pas.`, cta: "Bantu aku cari", prefill: "" };
+    case "katalog":
+      return { key: "katalog", text: "Cari yang spesifik? Coba tulis seperti ngobrol, misalnya \"sepatu putih di bawah 300rb\".", cta: "Tanya Kirana AI", prefill: "" };
+    case "produk": {
+      const p = Store.getProduct(parts[1]);
+      if (!p) return null;
+      return { key: "produk-" + p.id, text: `Ragu soal ${p.name}? Tanya aku soal ukuran, bahan, atau pilihan lain yang mirip.`, cta: "Tanya soal produk ini", prefill: `Apakah ${p.name} cocok untuk saya?` };
+    }
+    case "keranjang":
+      if (!Store.cartCount()) return null;
+      return { key: "keranjang", text: "Sebelum checkout, mau aku cek voucher dan cara dapat gratis ongkir?", cta: "Cek voucher", prefill: "Ada voucher apa?" };
+    default:
+      return null;
+  }
+}
+
+function hideAINudge() {
+  clearTimeout(aiNudgeTimer);
+  clearTimeout(aiNudgeHideTimer);
+  document.getElementById("ai-nudge")?.remove();
+}
+
+function scheduleAINudge(parts) {
+  hideAINudge();
+  const nudge = aiNudgeFor(parts);
+  if (!nudge) return;
+  let seen = {};
+  try {
+    seen = JSON.parse(sessionStorage.getItem("kirana_ai_nudge") || "{}");
+    if (localStorage.getItem("kirana_ai_nudge_off")) return;
+  } catch (err) {}
+  if (seen[nudge.key]) return;
+
+  aiNudgeTimer = setTimeout(() => {
+    // Jangan muncul jika pembeli sedang membuka panel/jendela lain
+    if (modalRoot.innerHTML.trim()) return;
+    const install = document.getElementById("install-bar");
+    if (install && !install.classList.contains("hidden")) return;
+
+    seen[nudge.key] = 1;
+    try {
+      sessionStorage.setItem("kirana_ai_nudge", JSON.stringify(seen));
+    } catch (err) {}
+
+    const el = document.createElement("div");
+    el.className = "ai-nudge";
+    el.id = "ai-nudge";
+    el.setAttribute("role", "status");
+    el.innerHTML = `
+      <span class="bot">✨</span>
+      <div class="grow">
+        <b>Kirana AI</b>
+        <p>${esc(nudge.text)}</p>
+        <button class="btn btn-primary" data-open-ai data-prefill="${esc(nudge.prefill)}">${esc(nudge.cta)}</button>
+      </div>
+      <button class="icon-btn" data-ai-nudge-close aria-label="Tutup sapaan">✕</button>`;
+    document.body.appendChild(el);
+    aiNudgeHideTimer = setTimeout(hideAINudge, AI_NUDGE_SHOW);
+  }, AI_NUDGE_DELAY);
+}
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-ai-nudge-close]")) return hideAINudge();
+  if (e.target.closest("[data-open-ai]")) hideAINudge();
+});
 
 /* =====================================================================
    MULAI APLIKASI
