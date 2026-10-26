@@ -1,0 +1,83 @@
+# Membuat aplikasi Android Kirana (APK) secara otomatis.
+# - Setiap ada perubahan di folder android-app/, GitHub membuat APK baru.
+# - Di branch utama, APK langsung diterbitkan di halaman Releases dengan link tetap:
+#   https://github.com/<pemilik>/<repo>/releases/latest/download/Kirana.apk
+name: Aplikasi Android
+
+on:
+  push:
+    paths:
+      - "android-app/**"
+      - ".github/workflows/android-app.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-app
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: android-app/package-lock.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Siapkan proyek Android
+        run: |
+          npm ci
+          npx cap sync android
+
+      - name: Pakai kunci rahasia (jika sudah diisi di GitHub Secrets)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KIRANA_KEYSTORE_BASE64 }}
+        if: env.KEYSTORE_BASE64 != ''
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/kirana.keystore"
+          echo "KIRANA_KEYSTORE_FILE=$RUNNER_TEMP/kirana.keystore" >> "$GITHUB_ENV"
+
+      - name: Buat APK dan AAB
+        working-directory: android-app/android
+        env:
+          KIRANA_KEYSTORE_PASSWORD: ${{ secrets.KIRANA_KEYSTORE_PASSWORD }}
+          KIRANA_KEY_ALIAS: ${{ secrets.KIRANA_KEY_ALIAS }}
+          KIRANA_KEY_PASSWORD: ${{ secrets.KIRANA_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease bundleRelease
+          mkdir -p ../dist
+          cp app/build/outputs/apk/release/app-release.apk ../dist/Kirana.apk
+          cp app/build/outputs/bundle/release/app-release.aab ../dist/Kirana.aab
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Kirana-android
+          path: android-app/dist/
+
+      - name: Terbitkan di Releases (branch utama saja)
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete aplikasi-android --yes --cleanup-tag || true
+          gh release create aplikasi-android dist/Kirana.apk dist/Kirana.aab \
+            --target "$GITHUB_SHA" \
+            --latest \
+            --title "Aplikasi Android Kirana (versi ${GITHUB_RUN_NUMBER})" \
+            --notes "Download **Kirana.apk** di bawah lalu buka file-nya di HP Android untuk memasang. Kirana.aab untuk upload ke Google Play Console."

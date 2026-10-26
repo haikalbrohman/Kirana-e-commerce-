@@ -1,0 +1,19 @@
+{
+  "name": "kirana-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplikasi Android Kirana (membuka website Kirana di dalam aplikasi)",
+  "scripts": {
+    "sync": "cap sync android",
+    "icons": "capacitor-assets generate --android"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.3"
+  }
+}

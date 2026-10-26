@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kirana</string>
+    <string name="title_activity_main">Kirana</string>
+    <string name="package_name">com.haikalbrohman.kirana</string>
+    <string name="custom_url_scheme">com.haikalbrohman.kirana</string>
+</resources>

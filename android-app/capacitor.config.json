@@ -1,0 +1,19 @@
+{
+  "appId": "com.haikalbrohman.kirana",
+  "appName": "Kirana",
+  "webDir": "www",
+  "server": {
+    "url": "https://haikalbrohman.github.io/Kirana-e-commerce-/",
+    "errorPath": "offline.html"
+  },
+  "android": {
+    "backgroundColor": "#f2f5fb",
+    "appendUserAgent": "KiranaAndroid"
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "disable",
+      "style": "LIGHT"
+    }
+  }
+}
