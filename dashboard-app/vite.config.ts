@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath, URL } from "node:url";
 
 // Hasil build masuk ke ../dashboard agar tampil di GitHub Pages:
-// https://haikalbrohman.github.io/Shopia-e-commerce-/dashboard/
+// https://haikalbrohman.github.io/Kirana-e-commerce-/dashboard/
 export default defineConfig({
   base: "./",
   plugins: [react(), tailwindcss()],

@@ -34,7 +34,7 @@ const CONFIG = {
   // menyimpan produk & foto. "branch" = branch yang dipakai GitHub Pages.
   github: {
     owner: "haikalbrohman",
-    repo: "Shopia-e-commerce-",
+    repo: "Kirana-e-commerce-",
     branch: "claude/shopia-ecommerce-build-05ok69",
   },
 };
