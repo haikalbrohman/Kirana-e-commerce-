@@ -341,5 +341,63 @@ const ShopiaAI = (() => {
     return localReply(message);
   }
 
-  return { parseQuery, search, recommend, similar, summarizeReviews, chat };
+  /* ---------- 5. Chat penjual (dibalas otomatis oleh AI) ---------- */
+  // Seperti chat penjual di marketplace: pembeli bertanya tentang produk /
+  // pesanan, AI menjawab atas nama toko dengan data produk yang sebenarnya.
+  function sellerLocalReply(message, product, order) {
+    const t = message.toLowerCase();
+    const p = product;
+    const list = (arr) => (arr || []).join(", ");
+
+    if (/^(halo|hai|hi|permisi|pagi|siang|sore|malam|assalam|min|kak)\b/.test(t) && t.length < 20)
+      return `Halo kak, selamat datang di Kirana Official Store 😊 ${p ? `Ada yang mau ditanyakan soal ${p.name}?` : "Ada yang bisa kami bantu?"}`;
+
+    if (order && /pesanan|paket|kapan|sampai|resi|lacak|dikirim|status/.test(t))
+      return `Pesanan ${order.id} sedang kami pantau ya kak 📦 Kakak bisa lihat posisi paket secara detail di menu "Lacak Pesanan". Kalau ada kendala, kabari kami di sini.`;
+
+    if (p) {
+      if (/stok|ready|ready ga|masih ada|tersedia|habis/.test(t))
+        return p.stock > 0
+          ? `Ready kak! Stok ${p.name} saat ini tinggal ${p.stock} pcs${p.stock < 30 ? ", termasuk cepat habis lho 🔥" : "."} Silakan langsung checkout ya.`
+          : `Mohon maaf kak, ${p.name} sedang kosong. Kakak bisa simpan ke wishlist dulu, nanti kami restock 🙏`;
+      if (/ukuran|size|muat|pas|lingkar|panjang|berat badan|bb|tb/.test(t))
+        return p.variants && p.variants.ukuran && p.variants.ukuran.length
+          ? `Ukuran yang tersedia: ${list(p.variants.ukuran)}. Kalau ragu, kami sarankan ambil satu ukuran lebih besar ya kak. Bisa tukar ukuran maks. 7 hari setelah barang diterima 👍`
+          : `Produk ini tidak ada pilihan ukuran kak, satu ukuran untuk semua 😊`;
+      if (/warna|color|varian|pilihan/.test(t))
+        return p.variants && p.variants.warna && p.variants.warna.length
+          ? `Pilihan warna: ${list(p.variants.warna)}. Warna paling laris biasanya ${p.variants.warna[0]} kak ✨`
+          : `Produk ini hanya ada satu warna seperti di foto ya kak.`;
+      if (/ori|asli|original|kw|palsu/.test(t))
+        return `Dijamin 100% original kak 🛡️ Kalau tidak sesuai deskripsi, uang kembali penuh.`;
+      if (/bahan|material|kualitas|tebal|awet|detail|spesifikasi|spek/.test(t))
+        return `Info dari deskripsi produk: ${p.description}\n\nRating ${p.rating}/5 dari ${p.reviews.length} ulasan pembeli 😊`;
+      if (/nego|kurang|diskon|murah|potong|promo|voucher/.test(t))
+        return `Harga ${formatRupiah(p.price)} sudah harga terbaik kak 🙏 Tapi kakak bisa pakai voucher: ${VOUCHERS.slice(0, 2).map((v) => `${v.code} (${v.desc})`).join(" atau ")}.`;
+    }
+
+    if (/kirim|dikirim|hari ini|kapan|proses|lama|ongkir|kurir|cod/.test(t))
+      return `Pesanan yang masuk sebelum jam 15.00 kami kirim di hari yang sama kak 🚚 Pilihan kurir: ${SHIPPING.map((s) => `${s.name} (${s.eta})`).join(", ")}. Gratis ongkir untuk belanja min. ${formatRupiah(CONFIG.freeShippingMin)}.`;
+    if (/terima kasih|makasih|thanks|thx|oke|ok|siap/.test(t))
+      return `Sama-sama kak, terima kasih sudah belanja di Kirana 💙 Jangan lupa kasih ulasan ya setelah barang sampai!`;
+    return null; // tidak dikenali -> serahkan ke asisten belanja umum
+  }
+
+  async function sellerChat(message, { product = null, order = null, history = [] } = {}) {
+    // Jika AI Claude aktif, kirim pertanyaan beserta konteks produk/pesanan
+    if (CONFIG.aiEndpoint) {
+      const ctx = product ? `tentang produk ${product.name} [[${product.id}]]` : order ? `tentang pesanan ${order.id}` : "";
+      try {
+        return await remoteReply(`[Pembeli chat ke penjual ${ctx}. Jawab ramah sebagai admin toko.] ${message}`, history);
+      } catch (e) {
+        console.warn("Kirana AI: server tidak tersedia, memakai AI lokal.", e);
+      }
+    }
+    await new Promise((r) => setTimeout(r, 600));
+    const text = sellerLocalReply(message, product, order);
+    if (text) return { text, products: [] };
+    return localReply(message);
+  }
+
+  return { parseQuery, search, recommend, similar, summarizeReviews, chat, sellerChat };
 })();
