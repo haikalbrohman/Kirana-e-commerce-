@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Download Aplikasi Kirana</title>
+  <meta name="description" content="Download aplikasi Kirana untuk HP Android, atau pasang di iPhone dari Safari." />
+  <meta name="theme-color" content="#1a5cff" />
+  <link rel="icon" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <style>
+    :root { --primary: #1a5cff; --text: #1b2440; --muted: #5b6480; --bg: #f2f5fb; --border: #e3e9f5; --leaf: #52ad36; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+    main { max-width: 480px; margin: 0 auto; padding: 32px 16px 48px; }
+    .hero { text-align: center; }
+    .hero img { width: 112px; height: 112px; border-radius: 28px; box-shadow: 0 12px 30px rgba(26, 92, 255, .3); }
+    h1 { font-size: 1.7rem; margin: 18px 0 6px; letter-spacing: -.4px; }
+    .lead { color: var(--muted); margin: 0 0 24px; line-height: 1.5; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 20px; margin-top: 16px; }
+    .card h2 { font-size: 1.1rem; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+    .card .sub { color: var(--muted); font-size: .9rem; margin: 0 0 16px; }
+    .card.dim { opacity: .75; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px; border-radius: 999px;
+           background: linear-gradient(135deg, #2f6bff, var(--primary)); color: #fff; font-size: 1.15rem; font-weight: 700; text-decoration: none;
+           box-shadow: 0 10px 24px rgba(26, 92, 255, .35); }
+    .btn:active { transform: scale(.98); }
+    .btn.alt { background: #fff; color: var(--primary); border: 2px solid var(--primary); box-shadow: none; font-size: 1rem; padding: 14px; }
+    .size { text-align: center; color: var(--muted); font-size: .82rem; margin: 10px 0 0; }
+    ol { margin: 16px 0 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 10px; }
+    ol li { counter-increment: s; display: flex; gap: 12px; align-items: flex-start; font-size: .93rem; line-height: 1.45; }
+    ol li::before { content: counter(s); flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: #e8efff; color: var(--primary);
+                    font-weight: 700; font-size: .85rem; display: grid; place-items: center; }
+    .copy { display: flex; gap: 8px; margin-top: 12px; }
+    .copy input { flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: .8rem; color: var(--muted); background: var(--bg); }
+    .copy button { border: 0; border-radius: 12px; padding: 0 14px; background: var(--text); color: #fff; font-weight: 600; }
+    .back { display: block; text-align: center; margin-top: 28px; color: var(--primary); font-weight: 600; text-decoration: none; }
+    .note { font-size: .85rem; color: var(--muted); margin-top: 12px; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <img src="icons/icon-512.png" alt="Logo Kirana" width="112" height="112" />
+      <h1>Aplikasi Kirana</h1>
+      <p class="lead">Belanja lebih cepat langsung dari layar HP.<br />Gratis, ukurannya hanya 5 MB.</p>
+    </section>
+
+    <section class="card" id="android">
+      <h2>🤖 HP Android</h2>
+      <p class="sub">Samsung, Xiaomi, Oppo, Vivo, Realme, dan lainnya</p>
+      <a class="btn" id="apk-btn" href="https://github.com/haikalbrohman/Kirana-e-commerce-/releases/latest/download/Kirana.apk">⬇️ Download Aplikasi</a>
+      <p class="size">Kirana.apk · 5 MB</p>
+      <ol>
+        <li><span>Tekan tombol di atas. Kalau Chrome bilang "file mungkin berbahaya", pilih <b>Tetap download</b>.</span></li>
+        <li><span>Buka file <b>Kirana.apk</b> dari notifikasi atau menu Download.</span></li>
+        <li><span>Kalau muncul peringatan, pilih <b>Setelan → Izinkan dari sumber ini</b>, lalu kembali.</span></li>
+        <li><span>Tekan <b>Instal</b>. Kalau muncul Play Protect, pilih <b>Tetap instal</b>.</span></li>
+      </ol>
+      <p class="note">Tombol tidak berfungsi? Salin link ini lalu buka di <b>Chrome</b>:</p>
+      <div class="copy">
+        <input id="apk-link" readonly value="https://github.com/haikalbrohman/Kirana-e-commerce-/releases/latest/download/Kirana.apk" aria-label="Link download" />
+        <button type="button" id="copy-btn">Salin</button>
+      </div>
+    </section>
+
+    <section class="card" id="iphone">
+      <h2>🍎 iPhone</h2>
+      <p class="sub">Pasang langsung dari Safari, tanpa download</p>
+      <a class="btn alt" href="./">Buka Kirana di Safari</a>
+      <ol>
+        <li><span>Buka website Kirana di <b>Safari</b>.</span></li>
+        <li><span>Tekan tombol <b>Bagikan</b> (kotak dengan panah ke atas).</span></li>
+        <li><span>Pilih <b>Tambah ke Layar Utama</b>, lalu <b>Tambah</b>.</span></li>
+      </ol>
+    </section>
+
+    <a class="back" href="./">← Kembali belanja</a>
+  </main>
+  <script>
+    // Tampilkan bagian yang sesuai HP pengunjung di urutan teratas
+    var ua = navigator.userAgent || "";
+    var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+      var ip = document.getElementById("iphone");
+      ip.parentNode.insertBefore(ip, document.getElementById("android"));
+      document.getElementById("android").classList.add("dim");
+    }
+    document.getElementById("copy-btn").addEventListener("click", function () {
+      var input = document.getElementById("apk-link");
+      var btn = this;
+      function done() { btn.textContent = "Tersalin ✓"; setTimeout(function () { btn.textContent = "Salin"; }, 2000); }
+      if (navigator.clipboard) navigator.clipboard.writeText(input.value).then(done, function () { input.select(); document.execCommand("copy"); done(); });
+      else { input.select(); document.execCommand("copy"); done(); }
+    });
+  </script>
+</body>
+</html>
