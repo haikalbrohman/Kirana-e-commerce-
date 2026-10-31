@@ -23,6 +23,8 @@ const Store = (() => {
     viewed: [], // produk yang pernah dilihat (untuk rekomendasi AI)
     searches: [], // riwayat pencarian
     chat: [], // riwayat chat Kirana AI
+    sellerChat: [], // riwayat chat dengan penjual (dibalas Kirana AI)
+    myReviews: [], // ulasan yang ditulis pembeli: [{ productId, orderId, name, rating, text, date }]
   };
 
   // Ambil data dari localStorage (aman jika error / mode privat)
@@ -191,6 +193,23 @@ const Store = (() => {
   // Pesanan milik pengguna yang sedang masuk (atau tamu jika belum masuk)
   const myOrders = () => state.orders.filter((o) => o.user === state.currentUser);
 
+  // Pembeli menekan "Pesanan Diterima" -> status langsung Selesai
+  function markReceived(id) {
+    const o = state.orders.find((x) => x.id === id);
+    if (!o) return;
+    o.receivedAt = new Date().toISOString();
+    save();
+  }
+
+  /* ---------- Ulasan dari pembeli ---------- */
+  function addReview(r) {
+    // Satu ulasan per produk per pesanan (menulis ulang = mengganti)
+    state.myReviews = state.myReviews.filter((x) => !(x.productId === r.productId && x.orderId === r.orderId));
+    state.myReviews.unshift({ ...r, date: new Date().toISOString() });
+    save();
+  }
+  const reviewFor = (productId, orderId) => state.myReviews.find((x) => x.productId === productId && x.orderId === orderId);
+
   /* ---------- Riwayat (untuk personalisasi AI) ---------- */
   function trackView(id) {
     state.viewed = [id, ...state.viewed.filter((x) => x !== id)].slice(0, 20);
@@ -205,6 +224,11 @@ const Store = (() => {
 
   function saveChat(messages) {
     state.chat = messages.slice(-30);
+    save();
+  }
+
+  function saveSellerChat(messages) {
+    state.sellerChat = messages.slice(-50);
     save();
   }
 
@@ -236,6 +260,10 @@ const Store = (() => {
     trackView,
     trackSearch,
     saveChat,
+    saveSellerChat,
+    markReceived,
+    addReview,
+    reviewFor,
   };
 })();
 

@@ -31,6 +31,12 @@ const categoryName = (id) => (CATEGORIES.find((c) => c.id === id) || {}).name ||
 const formatSold = (n) => (n >= 1000 ? (n / 1000).toFixed(1).replace(".", ",").replace(",0", "") + "rb" : String(n));
 const stars = (r) => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
 
+// Ulasan produk = ulasan dari pembeli di HP ini (paling atas) + ulasan bawaan
+function reviewsOf(p) {
+  const mine = Store.state.myReviews.filter((r) => r.productId === p.id).map((r) => ({ ...r, mine: true }));
+  return [...mine, ...(p.reviews || [])];
+}
+
 // Gambar produk: pakai foto jika ada, jika tidak tampilkan ilustrasi emoji
 function thumb(p, idx = 0) {
   const img = p.images && p.images.length ? p.images[idx % p.images.length] : null;
@@ -383,7 +389,8 @@ function pageProduct(id) {
     Store.trackView(id);
   }
   const d = discountPct(p);
-  const summary = ShopiaAI.summarizeReviews(p);
+  const reviews = reviewsOf(p);
+  const summary = ShopiaAI.summarizeReviews({ ...p, reviews });
   const similar = ShopiaAI.similar(p, 4);
   const wished = Store.inWishlist(p.id);
   const keys = variantKeys(p);
@@ -404,7 +411,7 @@ function pageProduct(id) {
         <span class="small" style="color:var(--primary);font-weight:700">${esc(categoryName(p.category))}</span>
         <h1 class="pd-name">${esc(p.name)}</h1>
         <div class="pd-stats">
-          <span>${p.rating > 0 ? `<span class="stars">★</span> ${p.rating} (${p.reviews.length} ulasan)` : "✨ Produk baru"}</span>
+          <span>${p.rating > 0 ? `<span class="stars">★</span> ${p.rating} (${reviews.length} ulasan)` : "✨ Produk baru"}</span>
           <span>${formatSold(p.sold)} terjual</span>
           <span style="color:${p.stock < 20 ? "var(--danger)" : "inherit"}">Stok: ${p.stock}</span>
         </div>
@@ -439,6 +446,7 @@ function pageProduct(id) {
         </div>
 
         <div class="pd-actions">
+          <a class="btn btn-ghost chat-btn" href="#/chat?p=${p.id}" aria-label="Chat penjual" title="Chat penjual">💬</a>
           <button class="btn btn-ghost chat-btn" data-action="wish" data-id="${p.id}" aria-label="Wishlist">${wished ? "💜" : "🤍"}</button>
           <button class="btn btn-primary" data-action="pd-add" ${p.stock <= 0 ? "disabled" : ""}>🛒 Keranjang</button>
           <button class="btn btn-dark" data-action="pd-buy" ${p.stock <= 0 ? "disabled" : ""}>Beli Sekarang</button>
@@ -449,7 +457,7 @@ function pageProduct(id) {
       ${
         summary
           ? `<div class="ai-box">
-        <h3>✨ Ringkasan AI dari ${p.reviews.length} ulasan</h3>
+        <h3>✨ Ringkasan AI dari ${reviews.length} ulasan</h3>
         <p class="small"><b>${summary.verdict}</b> — ${summary.pct}% pembeli memberi bintang 4 atau 5.</p>
         ${summary.pros.length ? `<ul>${summary.pros.map((x) => `<li class="pill pill-success">👍 ${x}</li>`).join("")}</ul>` : ""}
         ${summary.cons.length ? `<ul>${summary.cons.map((x) => `<li class="pill pill-accent">⚠️ Catatan: ${x}</li>`).join("")}</ul>` : ""}
@@ -457,6 +465,12 @@ function pageProduct(id) {
       </div>`
           : ""
       }
+
+      <div class="pd-box shop-row">
+        <span class="shop-ava">K</span>
+        <div style="flex:1;min-width:0"><b>Kirana Official Store</b><div class="small muted">🟢 Online · balas chat ± 1 menit (dibantu AI)</div></div>
+        <a class="btn btn-outline" style="padding:8px 14px" href="#/chat?p=${p.id}">💬 Chat</a>
+      </div>
 
       <div class="pd-box">
         <h3 style="font-size:1rem;margin-bottom:8px">Deskripsi Produk</h3>
@@ -466,12 +480,12 @@ function pageProduct(id) {
       <div class="pd-box">
         <div class="section-head" style="margin-bottom:4px"><h2 style="font-size:1rem">Ulasan Pembeli</h2>${p.rating > 0 ? `<span class="small"><span class="stars">★</span> ${p.rating}/5</span>` : ""}</div>
         ${
-          p.reviews.length
-            ? p.reviews
+          reviews.length
+            ? reviews
                 .map(
                   (r) => `
           <div class="review">
-            <div class="review-head"><span class="avatar">${esc(r.name[0])}</span><div><b>${esc(r.name)}</b><div class="stars">${stars(r.rating)}</div></div><span class="small muted" style="margin-left:auto">${new Date(r.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span></div>
+            <div class="review-head"><span class="avatar">${esc(r.name[0])}</span><div><b>${esc(r.name)}</b>${r.mine ? ` <span class="pill pill-success" style="font-size:.65rem">Ulasan kamu</span>` : ""}<div class="stars">${stars(r.rating)}</div></div><span class="small muted" style="margin-left:auto">${new Date(r.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span></div>
             <p class="small" style="margin-top:6px">${esc(r.text)}</p>
           </div>`
                 )
@@ -742,6 +756,7 @@ function pageAccount() {
   <div class="card menu-list" style="margin-top:14px">
     <a href="#/pesanan">📦 Riwayat Pesanan <span class="arrow">›</span></a>
     <a href="#/wishlist">💜 Wishlist <span class="arrow">›</span></a>
+    <a href="#/chat">💬 Chat Penjual <span class="arrow">›</span></a>
     <button data-open-ai>✨ Tanya Kirana AI <span class="arrow">›</span></button>
     ${isStandalone() ? "" : `<button data-action="install-app">📲 Install Aplikasi Kirana <span class="arrow">›</span></button>`}
     <a href="#/faq">❓ Pusat Bantuan <span class="arrow">›</span></a>
@@ -755,6 +770,7 @@ function pageAccount() {
 // Status pesanan demo: berubah otomatis sesuai umur pesanan
 const ORDER_STEPS = ["Diproses", "Dikemas", "Dikirim", "Selesai"];
 function orderStatus(o) {
+  if (o.receivedAt) return 3;
   const mins = (Date.now() - new Date(o.date).getTime()) / 60000;
   if (mins < 2) return 0;
   if (mins < 10) return 1;
@@ -784,14 +800,263 @@ function pageOrders() {
           ${ORDER_STEPS.map((s, i) => `<div class="${i <= step ? "done" : ""}"><i>${i <= step ? "✓" : ""}</i>${s}</div>`).join("")}
         </div>
         <div class="summary-row total"><span>Total</span><span>${formatRupiah(o.total)}</span></div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-ghost" style="flex:1;padding:9px" data-action="reorder" data-id="${o.id}">🔁 Beli Lagi</button>
-          <a class="btn btn-outline" style="flex:1;padding:9px" target="_blank" rel="noopener" href="${waLink(`Halo Kirana, saya ingin menanyakan pesanan ${o.id}.`)}">💬 Tanya</a>
+        <div class="order-btns">
+          <a class="btn btn-ghost" href="#/lacak/${o.id}">🚚 Lacak</a>
+          <a class="btn btn-ghost" href="#/chat?o=${o.id}">💬 Chat Penjual</a>
+          ${
+            step === 2
+              ? `<button class="btn btn-primary" data-action="order-received" data-id="${o.id}">✅ Pesanan Diterima</button>`
+              : step === 3
+              ? o.items.every((i) => Store.reviewFor(i.id, o.id))
+                ? `<button class="btn btn-outline" data-action="open-review" data-id="${o.id}">⭐ Ubah Ulasan</button>`
+                : `<button class="btn btn-primary" data-action="open-review" data-id="${o.id}">⭐ Beri Ulasan</button>`
+              : ""
+          }
+          <button class="btn btn-ghost" data-action="reorder" data-id="${o.id}">🔁 Beli Lagi</button>
         </div>
       </div>`;
           })
           .join("")
   }`;
+}
+
+/* =====================================================================
+   HALAMAN: LACAK PESANAN (riwayat perjalanan paket + nomor resi)
+   ===================================================================== */
+// Riwayat perjalanan demo. "min" = menit setelah pesanan dibuat.
+function trackingEvents(o) {
+  const city = (o.address && o.address.city) || "kota tujuan";
+  const who = (o.address && o.address.name) || "penerima";
+  const ev = [
+    { min: 0, step: 0, text: "Pesanan dibuat. Menunggu konfirmasi penjual." },
+    { min: 1, step: 0, text: "Pesanan dikonfirmasi oleh Kirana Official Store." },
+    { min: 2, step: 1, text: "Penjual sedang mengemas pesanan." },
+    { min: 10, step: 2, text: "Paket diserahkan ke kurir Kirana Express di Gudang Jakarta Selatan." },
+    { min: 20, step: 2, text: "Paket tiba di pusat sortir Jakarta Timur." },
+    { min: 30, step: 2, text: `Paket dalam perjalanan menuju ${city}.` },
+    { min: 45, step: 2, text: `Paket tiba di hub ${city}.` },
+    { min: 52, step: 2, text: "Paket dibawa kurir menuju alamatmu. 🛵" },
+    { min: 60, step: 3, text: `Paket diterima oleh ${who}. 🎉` },
+  ];
+  const age = (Date.now() - new Date(o.date).getTime()) / 60000;
+  const start = new Date(o.date).getTime();
+  return ev
+    .filter((e) => e.min <= age || (o.receivedAt && e.min <= 60))
+    .map((e) => ({ ...e, time: e.min === 60 && o.receivedAt && age < 60 ? new Date(o.receivedAt) : new Date(start + e.min * 60000) }))
+    .reverse();
+}
+
+function pageTracking(id) {
+  const o = Store.state.orders.find((x) => x.id === id);
+  if (!o) return emptyState("📦", "Pesanan tidak ditemukan", "Coba buka dari menu Riwayat Pesanan.", "Lihat Pesanan", "#/pesanan");
+  const step = orderStatus(o);
+  const ship = SHIPPING.find((s) => s.id === o.shipping) || SHIPPING[1];
+  const resi = "KRX" + o.id.replace(/\D/g, "").padStart(8, "0") + "ID";
+  const events = trackingEvents(o);
+  const pct = [8, 35, 68, 100][step];
+  return `
+  <h1 class="page-title"><a href="#/pesanan" aria-label="Kembali" style="margin-right:6px">‹</a>Lacak Pesanan</h1>
+  <div class="track-hero">
+    <div class="small" style="opacity:.85">Status</div>
+    <b style="font-size:1.25rem">${["Sedang diproses", "Sedang dikemas", "Dalam pengiriman", "Pesanan selesai"][step]}</b>
+    <div class="track-road"><i style="width:${pct}%"></i><span style="left:${pct}%">${step === 3 ? "🏠" : "🚚"}</span></div>
+    <div class="track-meta">
+      <div><span>Kurir</span><b>Kirana Express · ${esc(ship.name)}</b></div>
+      <div><span>No. Resi</span><b>${resi}</b> <button class="btn-link" data-action="copy-text" data-text="${resi}" style="color:#fff;text-decoration:underline">Salin</button></div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:16px;margin-top:14px">
+    <h3 style="font-size:1rem;margin-bottom:10px">Riwayat Perjalanan</h3>
+    <ol class="timeline">
+      ${events
+        .map(
+          (e, i) => `<li class="${i === 0 ? "now" : ""}"><i></i><div><div>${esc(e.text)}</div><div class="small muted">${e.time.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</div></div></li>`
+        )
+        .join("")}
+    </ol>
+  </div>
+
+  <div class="card" style="padding:16px;margin-top:14px">
+    <h3 style="font-size:1rem;margin-bottom:6px">Alamat Pengiriman</h3>
+    <p class="small"><b>${esc(o.address?.name || "-")}</b> · ${esc(o.address?.phone || "")}<br />${esc(o.address?.street || "")}, ${esc(o.address?.city || "")} ${esc(o.address?.zip || "")}</p>
+  </div>
+
+  <div class="order-btns" style="margin-top:14px">
+    <a class="btn btn-ghost" href="#/chat?o=${o.id}">💬 Chat Penjual</a>
+    ${step === 2 ? `<button class="btn btn-primary" data-action="order-received" data-id="${o.id}">✅ Pesanan Diterima</button>` : ""}
+    ${step === 3 ? `<button class="btn btn-primary" data-action="open-review" data-id="${o.id}">⭐ Beri Ulasan</button>` : ""}
+  </div>`;
+}
+
+/* =====================================================================
+   HALAMAN: CHAT PENJUAL (dibalas otomatis oleh Kirana AI)
+   ===================================================================== */
+let sellerBusy = false;
+const SELLER_QUICK = {
+  product: ["Masih ready, kak?", "Ukuran yang pas?", "Ada warna apa saja?", "Original?", "Bisa dikirim hari ini?"],
+  order: ["Pesanan saya sampai kapan?", "Bisa dikirim hari ini?", "Mau tukar ukuran"],
+  general: ["Bisa dikirim hari ini?", "Ada voucher?", "Rekomendasi buat aku", "Metode pembayaran?"],
+};
+
+function sellerContext() {
+  const { params } = parseHash();
+  const product = params.get("p") ? Store.getProduct(params.get("p")) : null;
+  const order = params.get("o") ? Store.state.orders.find((x) => x.id === params.get("o")) : null;
+  return { product, order };
+}
+
+function sellerMsgHTML(m) {
+  if (m.role === "context") {
+    const p = m.productId && Store.getProduct(m.productId);
+    if (p) return `<a class="chat-ctx" href="#/produk/${p.id}"><span class="thumb">${thumb(p)}</span><div><div class="small muted">Kamu bertanya tentang</div><b>${esc(p.name)}</b><div style="color:var(--primary);font-weight:700">${formatRupiah(p.price)}</div></div></a>`;
+    if (m.orderId) return `<a class="chat-ctx" href="#/lacak/${m.orderId}"><span class="thumb" style="display:grid;place-items:center;font-size:1.6rem">📦</span><div><div class="small muted">Kamu bertanya tentang pesanan</div><b>${esc(m.orderId)}</b></div></a>`;
+    return "";
+  }
+  const time = m.time ? new Date(m.time).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "";
+  return `<div class="msg ${m.role === "user" ? "user" : "bot"}">${esc(m.text)}${
+    m.products && m.products.length
+      ? `<div class="msg-products">${m.products.map((id) => Store.getProduct(id)).filter(Boolean).map((p) => productCard(p, { compact: true })).join("")}</div>`
+      : ""
+  }<span class="msg-time">${time}${m.role === "user" ? " ✓✓" : ""}</span></div>`;
+}
+
+function pageSellerChat() {
+  const { product, order } = sellerContext();
+  const quick = product ? SELLER_QUICK.product : order ? SELLER_QUICK.order : SELLER_QUICK.general;
+  const msgs = Store.state.sellerChat.length
+    ? Store.state.sellerChat
+    : [{ role: "seller", text: "Halo kak, selamat datang di Kirana Official Store 😊\nChat ini dibalas otomatis oleh Kirana AI 24 jam. Silakan tanya stok, ukuran, pengiriman, atau pesananmu.", time: new Date().toISOString() }];
+  const ctx = product ? { role: "context", productId: product.id } : order ? { role: "context", orderId: order.id } : null;
+  return `
+  <div class="seller-chat">
+    <div class="seller-head">
+      <a href="javascript:history.back()" aria-label="Kembali" class="back">‹</a>
+      <span class="shop-ava">K</span>
+      <div style="flex:1;min-width:0"><b>Kirana Official Store</b><small>🟢 Online · dibalas oleh Kirana AI ✨</small></div>
+      <button class="icon-btn" data-action="seller-clear" title="Hapus chat" aria-label="Hapus chat">🗑️</button>
+    </div>
+    <div class="seller-msgs" id="seller-msgs">${msgs.map(sellerMsgHTML).join("")}${ctx ? sellerMsgHTML(ctx) : ""}</div>
+    <div class="ai-suggest">${quick.map((q) => `<button data-action="seller-quick" data-text="${esc(q)}">${esc(q)}</button>`).join("")}</div>
+    <form class="ai-input" data-form="seller-chat">
+      <input class="input" name="text" id="seller-text" placeholder="Tulis pesan ke penjual..." autocomplete="off" aria-label="Pesan" />
+      <button class="btn btn-primary" type="submit" aria-label="Kirim">➤</button>
+    </form>
+  </div>`;
+}
+
+async function sendSellerChat(text) {
+  text = (text || "").trim();
+  if (!text || sellerBusy) return;
+  sellerBusy = true;
+  const { product, order } = sellerContext();
+  let history = [...Store.state.sellerChat];
+  // Simpan kartu produk/pesanan sekali sebelum pertanyaan pertama tentangnya
+  const last = [...history].reverse().find((m) => m.role === "context");
+  if (product && !(last && last.productId === product.id)) history.push({ role: "context", productId: product.id });
+  if (order && !(last && last.orderId === order.id)) history.push({ role: "context", orderId: order.id });
+  history.push({ role: "user", text, time: new Date().toISOString() });
+  Store.saveSellerChat(history);
+  const box = document.getElementById("seller-msgs");
+  const draw = () => {
+    if (!box || !document.body.contains(box)) return;
+    box.innerHTML = history.map(sellerMsgHTML).join("");
+    box.scrollTop = box.scrollHeight;
+  };
+  draw();
+  if (box) {
+    box.insertAdjacentHTML("beforeend", `<div class="msg bot typing"><span></span><span></span><span></span></div>`);
+    box.scrollTop = box.scrollHeight;
+  }
+  try {
+    const chatHistory = history.filter((m) => m.role !== "context").slice(0, -1).map((m) => ({ role: m.role === "user" ? "user" : "assistant", text: m.text }));
+    const r = await ShopiaAI.sellerChat(text, { product, order, history: chatHistory });
+    history.push({ role: "seller", text: r.text, products: (r.products || []).map((p) => p.id), time: new Date().toISOString() });
+  } catch (err) {
+    history.push({ role: "seller", text: "Maaf kak, ada gangguan. Coba kirim ulang ya 🙏", time: new Date().toISOString() });
+  }
+  sellerBusy = false;
+  Store.saveSellerChat(history);
+  draw();
+}
+
+/* =====================================================================
+   MODAL TULIS ULASAN (setelah pesanan selesai)
+   ===================================================================== */
+function openReviewModal(orderId) {
+  const o = Store.state.orders.find((x) => x.id === orderId);
+  if (!o) return;
+  const u = Store.user();
+  const items = o.items.filter((i, idx, arr) => arr.findIndex((x) => x.id === i.id) === idx);
+  const ratings = {};
+  items.forEach((i) => (ratings[i.id] = (Store.reviewFor(i.id, o.id) || {}).rating || 5));
+  const LABEL = ["", "Sangat buruk", "Buruk", "Cukup", "Bagus", "Sangat bagus"];
+
+  modalRoot.innerHTML = `
+  <div class="filter-panel" data-close-modal>
+    <div class="modal-sheet" role="dialog" aria-label="Beri ulasan">
+      <div class="modal-head" style="align-items:center">
+        <div style="flex:1"><b style="font-size:1.1rem">⭐ Beri Ulasan</b><div class="small muted">Ceritakan pengalamanmu untuk membantu pembeli lain</div></div>
+        <button class="icon-btn" data-close-modal aria-label="Tutup">✕</button>
+      </div>
+      <form data-form="review" data-order="${o.id}">
+        ${items
+          .map((i) => {
+            const p = Store.getProduct(i.id);
+            const old = Store.reviewFor(i.id, o.id);
+            return `
+          <div class="review-item">
+            <div class="mini-line"><span class="thumb">${p ? thumb(p) : "📦"}</span><div style="flex:1;min-width:0"><b class="small">${esc(i.name)}</b>${i.variant ? `<div class="small muted">${esc(i.variant)}</div>` : ""}</div></div>
+            <div class="star-pick" data-pid="${i.id}">
+              ${[1, 2, 3, 4, 5].map((n) => `<button type="button" data-star="${n}" class="${n <= ratings[i.id] ? "on" : ""}" aria-label="${n} bintang">★</button>`).join("")}
+              <span class="small muted" data-star-label>${LABEL[ratings[i.id]]}</span>
+            </div>
+            <div class="review-tags">${["Kualitas bagus", "Sesuai foto", "Pengiriman cepat", "Kemasan rapi", "Harga worth it"].map((tg) => `<button type="button" data-tag="${tg}">${tg}</button>`).join("")}</div>
+            <textarea class="input" name="text-${i.id}" rows="3" placeholder="Bagaimana kualitas produknya? (opsional)">${old ? esc(old.text) : ""}</textarea>
+          </div>`;
+          })
+          .join("")}
+        <label class="option" style="margin:10px 0"><input type="checkbox" name="anon" /> Sembunyikan nama saya</label>
+        <button class="btn btn-primary btn-block" type="submit">Kirim Ulasan</button>
+      </form>
+    </div>
+  </div>`;
+
+  modalRoot.onclick = (e) => {
+    const star = e.target.closest("[data-star]");
+    if (star) {
+      const wrap = star.closest(".star-pick");
+      const n = Number(star.dataset.star);
+      ratings[wrap.dataset.pid] = n;
+      wrap.querySelectorAll("[data-star]").forEach((b) => b.classList.toggle("on", Number(b.dataset.star) <= n));
+      wrap.querySelector("[data-star-label]").textContent = LABEL[n];
+      return;
+    }
+    const tag = e.target.closest("[data-tag]");
+    if (tag) {
+      const ta = tag.closest(".review-item").querySelector("textarea");
+      if (!ta.value.includes(tag.dataset.tag)) ta.value = (ta.value ? ta.value.trim() + ". " : "") + tag.dataset.tag;
+      tag.classList.add("on");
+      return;
+    }
+    if (e.target.matches("[data-close-modal]") || e.target.closest("button[data-close-modal]")) closeModal();
+  };
+
+  modalRoot.querySelector('[data-form="review"]').onsubmit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const data = Object.fromEntries(new FormData(e.target));
+    const rawName = (u && u.name) || (o.address && o.address.name) || "Pembeli Kirana";
+    const name = data.anon ? rawName[0] + "***" + rawName.slice(-1) : rawName;
+    items.forEach((i) => {
+      const r = ratings[i.id];
+      const text = (data["text-" + i.id] || "").trim() || ["", "Kurang puas.", "Kurang sesuai harapan.", "Lumayan.", "Bagus, sesuai deskripsi.", "Mantap, sangat puas!"][r];
+      Store.addReview({ productId: i.id, orderId: o.id, name, rating: r, text });
+    });
+    closeModal();
+    toast("Terima kasih! Ulasanmu sudah tampil di halaman produk", { icon: "⭐", link: "#/produk/" + items[0].id });
+    render(false);
+  };
 }
 
 function pageWishlist() {
@@ -864,7 +1129,7 @@ function render(scrollTop = true) {
   const parts = path.split("/").filter(Boolean); // contoh: ["produk","p01"]
   let html;
   let title = "Kirana - Belanja Pintar, Dibantu AI";
-  document.body.classList.remove("has-pd-actions");
+  document.body.classList.remove("has-pd-actions", "chat-page");
 
   switch (parts[0]) {
     case undefined:
@@ -899,6 +1164,15 @@ function render(scrollTop = true) {
     case "pesanan":
       html = pageOrders();
       title = "Pesanan Saya - Kirana";
+      break;
+    case "lacak":
+      html = pageTracking(parts[1]);
+      title = "Lacak Pesanan - Kirana";
+      break;
+    case "chat":
+      html = pageSellerChat();
+      title = "Chat Penjual - Kirana";
+      document.body.classList.add("chat-page");
       break;
     case "wishlist":
       html = pageWishlist();
@@ -943,6 +1217,11 @@ function render(scrollTop = true) {
   if (document.activeElement !== si) si.value = parts[0] === "katalog" ? params.get("q") || "" : "";
 
   tickCountdown();
+
+  if (parts[0] === "chat") {
+    const box = document.getElementById("seller-msgs");
+    if (box) box.scrollTop = box.scrollHeight;
+  }
 }
 
 /* =====================================================================
@@ -1082,6 +1361,26 @@ document.addEventListener("click", (e) => {
       toast("Kamu sudah keluar", { icon: "👋" });
       render();
       break;
+    case "order-received":
+      Store.markReceived(el.dataset.id);
+      toast("Pesanan selesai. Yuk beri ulasan!", { icon: "🎉" });
+      render(false);
+      openReviewModal(el.dataset.id);
+      break;
+    case "open-review":
+      openReviewModal(el.dataset.id);
+      break;
+    case "copy-text":
+      navigator.clipboard?.writeText(el.dataset.text).catch(() => {});
+      toast("Disalin", { icon: "📋" });
+      break;
+    case "seller-quick":
+      sendSellerChat(el.dataset.text);
+      break;
+    case "seller-clear":
+      Store.saveSellerChat([]);
+      render(false);
+      break;
     case "reorder": {
       const o = Store.state.orders.find((x) => x.id === el.dataset.id);
       o.items.forEach((i) => Store.getProduct(i.id) && Store.addToCart(i.id, i.variantObj || {}, i.qty));
@@ -1126,6 +1425,12 @@ document.addEventListener("submit", (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(form));
   const type = form.dataset.form;
+
+  if (type === "seller-chat") {
+    sendSellerChat(data.text);
+    form.reset();
+    return;
+  }
 
   if (type === "voucher") {
     const r = Store.applyVoucher(data.code || "");
