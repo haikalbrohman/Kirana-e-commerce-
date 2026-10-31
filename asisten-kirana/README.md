@@ -17,7 +17,21 @@ Contoh:
 Data disimpan di `data_kirana.json`, jadi tidak hilang saat halaman di-refresh.
 Perubahan lewat chat langsung terlihat di menu Daftar Tugas / Catatan, dan sebaliknya.
 
-## Cara menjalankan
+## Cara menjalankan di PyCharm
+
+1. **File → Open**, pilih folder `asisten-kirana`.
+2. Jika PyCharm menawarkan membuat *virtual environment* (venv), pilih **OK**.
+   Jika tidak: **Settings → Project → Python Interpreter → Add Interpreter → Virtualenv**.
+3. Buka `requirements.txt`, klik **Install requirements** di bagian atas
+   (atau di tab **Terminal**: `pip install -r requirements.txt`).
+4. Salin `.streamlit/secrets.toml.example` menjadi `.streamlit/secrets.toml`, lalu isi API key.
+5. Buka `jalankan.py`, tekan tombol **▶ Run**. Browser akan terbuka di http://localhost:8501.
+6. Untuk berhenti, tekan tombol **■ Stop** merah di PyCharm.
+
+Tips belajar: pasang *breakpoint* (klik di samping nomor baris) di fungsi `jalankan_alat`
+lalu jalankan `jalankan.py` dengan **🐞 Debug** untuk melihat alat apa yang dipanggil Claude.
+
+## Cara menjalankan lewat terminal
 
 ```bash
 cd asisten-kirana
