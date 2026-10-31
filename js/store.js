@@ -24,6 +24,7 @@ const Store = (() => {
     searches: [], // riwayat pencarian
     chat: [], // riwayat chat Kirana AI
     sellerChat: [], // riwayat chat dengan penjual (dibalas Kirana AI)
+    voiceOn: false, // Kirana AI membacakan balasan dengan suara
     myReviews: [], // ulasan yang ditulis pembeli: [{ productId, orderId, name, rating, text, date }]
   };
 
@@ -227,6 +228,11 @@ const Store = (() => {
     save();
   }
 
+  function setVoice(on) {
+    state.voiceOn = !!on;
+    save();
+  }
+
   function saveSellerChat(messages) {
     state.sellerChat = messages.slice(-50);
     save();
@@ -261,6 +267,7 @@ const Store = (() => {
     trackSearch,
     saveChat,
     saveSellerChat,
+    setVoice,
     markReceived,
     addReview,
     reviewFor,

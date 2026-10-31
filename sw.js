@@ -8,7 +8,7 @@
    Naikkan angka VERSION jika ingin menghapus semua salinan lama.
    ===================================================================== */
 
-const VERSION = "kirana-v11";
+const VERSION = "kirana-v12";
 
 // File inti yang disimpan saat aplikasi pertama kali di-install
 const APP_SHELL = [
@@ -19,6 +19,7 @@ const APP_SHELL = [
   "./js/products.js",
   "./js/store.js",
   "./js/ai.js",
+  "./js/voice.js",
   "./js/admin.js",
   "./js/app.js",
   "./manifest.json",
