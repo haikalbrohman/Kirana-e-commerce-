@@ -32,6 +32,36 @@ const formatSold = (n) => (n >= 1000 ? (n / 1000).toFixed(1).replace(".", ",").r
 const stars = (r) => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
 
 // Ulasan produk = ulasan dari pembeli di HP ini (paling atas) + ulasan bawaan
+// Pesan suara: tombol putar seperti voice note di aplikasi chat
+function voiceNote(text) {
+  if (!KiranaVoice.supported() || !text) return "";
+  const d = KiranaVoice.duration(text);
+  const bars = Array.from({ length: 18 }, (_, i) => `<i style="height:${30 + ((i * 37) % 70)}%"></i>`).join("");
+  return `<button type="button" class="voice-note" data-speak="${esc(text)}" aria-label="Dengarkan pesan suara"><span class="vn-play">▶</span><span class="vn-wave">${bars}</span><span class="vn-dur">0:${String(d).padStart(2, "0")}</span></button>`;
+}
+
+// Putar pesan suara (otomatis memutar balasan terbaru jika mode suara aktif)
+function playVoice(btn) {
+  if (!btn) return;
+  const wasPlaying = btn.classList.contains("playing");
+  document.querySelectorAll(".voice-note.playing").forEach((b) => b.classList.remove("playing"));
+  if (wasPlaying) return KiranaVoice.stop();
+  btn.classList.add("playing");
+  KiranaVoice.speak(btn.dataset.speak, () => btn.classList.remove("playing"));
+}
+function autoSpeakLast(box) {
+  if (!Store.state.voiceOn || !box) return;
+  const notes = box.querySelectorAll(".msg.bot .voice-note");
+  playVoice(notes[notes.length - 1]);
+}
+document.addEventListener("click", (e) => {
+  const vn = e.target.closest("[data-speak]");
+  if (vn) {
+    e.preventDefault();
+    playVoice(vn);
+  }
+});
+
 function reviewsOf(p) {
   const mine = Store.state.myReviews.filter((r) => r.productId === p.id).map((r) => ({ ...r, mine: true }));
   return [...mine, ...(p.reviews || [])];
@@ -914,7 +944,7 @@ function sellerMsgHTML(m) {
     return "";
   }
   const time = m.time ? new Date(m.time).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "";
-  return `<div class="msg ${m.role === "user" ? "user" : "bot"}">${esc(m.text)}${
+  return `<div class="msg ${m.role === "user" ? "user" : "bot"}">${m.role === "user" ? "" : voiceNote(m.text)}${esc(m.text)}${
     m.products && m.products.length
       ? `<div class="msg-products">${m.products.map((id) => Store.getProduct(id)).filter(Boolean).map((p) => productCard(p, { compact: true })).join("")}</div>`
       : ""
@@ -934,6 +964,7 @@ function pageSellerChat() {
       <a href="javascript:history.back()" aria-label="Kembali" class="back">‹</a>
       <span class="shop-ava">K</span>
       <div style="flex:1;min-width:0"><b>Kirana Official Store</b><small>🟢 Online · dibalas oleh Kirana AI ✨</small></div>
+      ${KiranaVoice.supported() ? `<button class="icon-btn voice-toggle${Store.state.voiceOn ? " on" : ""}" data-action="voice-toggle" title="Balas dengan suara" aria-label="Balas dengan suara">${Store.state.voiceOn ? "🔊" : "🔇"}</button>` : ""}
       <button class="icon-btn" data-action="seller-clear" title="Hapus chat" aria-label="Hapus chat">🗑️</button>
     </div>
     <div class="seller-msgs" id="seller-msgs">${msgs.map(sellerMsgHTML).join("")}${ctx ? sellerMsgHTML(ctx) : ""}</div>
@@ -978,6 +1009,7 @@ async function sendSellerChat(text) {
   sellerBusy = false;
   Store.saveSellerChat(history);
   draw();
+  autoSpeakLast(box);
 }
 
 /* =====================================================================
@@ -1377,6 +1409,14 @@ document.addEventListener("click", (e) => {
     case "seller-quick":
       sendSellerChat(el.dataset.text);
       break;
+    case "voice-toggle": {
+      const on = !Store.state.voiceOn;
+      Store.setVoice(on);
+      if (!on) KiranaVoice.stop();
+      toast(on ? "Balasan akan dibacakan dengan suara" : "Suara dimatikan", { icon: on ? "🔊" : "🔇" });
+      render(false);
+      break;
+    }
     case "seller-clear":
       Store.saveSellerChat([]);
       render(false);
@@ -1552,6 +1592,7 @@ function openVariantModal(p) {
 }
 
 function closeModal() {
+  KiranaVoice.stop();
   modalRoot.innerHTML = "";
   modalRoot.onclick = null;
 }
@@ -1576,7 +1617,8 @@ function openAI(prefill = "") {
       <div class="ai-head">
         <span class="bot">✨</span>
         <div><b>Kirana AI</b><small>${CONFIG.aiEndpoint ? "Ditenagai Claude" : "Asisten belanja pintar"} · online</small></div>
-        <button class="icon-btn" data-ai-clear title="Hapus percakapan" aria-label="Hapus percakapan" style="margin-left:auto">🗑️</button>
+        ${KiranaVoice.supported() ? `<button class="icon-btn voice-toggle${Store.state.voiceOn ? " on" : ""}" data-ai-voice title="Balas dengan suara" aria-label="Balas dengan suara" style="margin-left:auto">${Store.state.voiceOn ? "🔊" : "🔇"}</button>` : ""}
+        <button class="icon-btn" data-ai-clear title="Hapus percakapan" aria-label="Hapus percakapan" style="margin-left:${KiranaVoice.supported() ? 0 : "auto"}">🗑️</button>
         <button class="icon-btn" data-close-ai aria-label="Tutup" style="margin-left:0">✕</button>
       </div>
       <div class="ai-msgs" id="ai-msgs"></div>
@@ -1592,7 +1634,7 @@ function openAI(prefill = "") {
   let history = [...msgs];
 
   const msgHTML = (m) => `
-    <div class="msg ${m.role === "user" ? "user" : "bot"}">${esc(m.text)}${
+    <div class="msg ${m.role === "user" ? "user" : "bot"}">${m.role === "user" ? "" : voiceNote(m.text)}${esc(m.text)}${
       m.products && m.products.length
         ? `<div class="msg-products">${m.products
             .map((id) => Store.getProduct(id))
@@ -1625,6 +1667,7 @@ function openAI(prefill = "") {
     aiBusy = false;
     Store.saveChat(history);
     draw();
+    autoSpeakLast(box);
   }
 
   document.getElementById("ai-form").onsubmit = (e) => {
@@ -1637,6 +1680,17 @@ function openAI(prefill = "") {
   modalRoot.onclick = (e) => {
     const sug = e.target.closest("[data-ai-suggest]");
     if (sug) return send(sug.dataset.aiSuggest);
+    const vt = e.target.closest("[data-ai-voice]");
+    if (vt) {
+      const on = !Store.state.voiceOn;
+      Store.setVoice(on);
+      vt.classList.toggle("on", on);
+      vt.textContent = on ? "🔊" : "🔇";
+      if (!on) KiranaVoice.stop();
+      toast(on ? "Kirana AI akan membalas dengan suara" : "Suara dimatikan", { icon: on ? "🔊" : "🔇" });
+      if (on) autoSpeakLast(box);
+      return;
+    }
     if (e.target.closest("[data-ai-clear]")) {
       Store.saveChat([]);
       history = [greeting];
